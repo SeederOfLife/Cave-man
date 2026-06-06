@@ -1,0 +1,28 @@
+[gd_scene load_steps=2 format=3 uid="uid=2002"]
+
+[ext_resource type="Script" path="res://scenes/test/TestDummy.gd" id="1"]
+
+[node name="TestDummy" type="StaticBody2D"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("1")
+
+# TestDummy Node Tree:
+# TestDummy [StaticBody2D]
+# ├── CollisionShape2D (CircleShape2D, radius 8)
+# ├── Sprite2D (placeholder visual)
+# └── Label (displays HP)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+# TODO: In editor, add CircleShape2D with radius 8
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+# TODO: Add a simple dummy sprite or ColorRect as placeholder
+
+[node name="Label" type="Label" parent="."]
+offset_left = -15.0
+offset_top = -30.0
+offset_right = 15.0
+offset_bottom = -10.0
+text = "HP: 5"
+alignment = 1
