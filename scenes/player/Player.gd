@@ -1,6 +1,6 @@
 ## Player.gd
 ## Complete player controller for Cave Man Roguelike
-## Handles 8-direction movement, animations, and signals
+## Handles 8-direction movement, animations, throwing, and signals
 
 extends CharacterBody2D
 
@@ -10,6 +10,9 @@ extends CharacterBody2D
 
 ## Emitted when player health reaches 0
 signal player_died
+
+## Emitted whenever player throws a stone (for stats tracking)
+signal stone_thrown
 
 # ============================================================================
 # MOVEMENT PROPERTIES
@@ -29,6 +32,22 @@ var velocity: Vector2 = Vector2.ZERO
 
 ## Direction the player is currently facing (for animations and throwing)
 var facing_direction: Vector2 = Vector2.RIGHT
+
+# ============================================================================
+# THROWING PROPERTIES
+# ============================================================================
+
+## Path to the stone scene to spawn
+const STONE_SCENE_PATH: String = "res://scenes/combat/Stone.tscn"
+
+## How long between throws (cooldown in seconds)
+const THROW_COOLDOWN: float = 0.4
+
+## Time remaining in the current throw cooldown
+var throw_cooldown_remaining: float = 0.0
+
+## Whether the player can throw right now
+var can_throw: bool = true
 
 # ============================================================================
 # CAMERA PROPERTIES
@@ -54,7 +73,6 @@ func _ready() -> void:
 	animated_sprite = $AnimatedSprite2D
 	camera = $Camera2D
 	
-	# TODO: Remove this print after testing
 	print("Player initialized at ", global_position)
 
 ## Called every frame
@@ -72,6 +90,9 @@ func _physics_process(delta: float) -> void:
 	
 	# Update animation based on current state
 	_update_animation()
+	
+	# Update throw cooldown
+	_update_throw_cooldown(delta)
 
 # ============================================================================
 # INPUT HANDLING
@@ -80,7 +101,6 @@ func _physics_process(delta: float) -> void:
 ## Read input actions and update velocity accordingly
 func _handle_input(delta: float) -> void:
 	# Get input direction from action inputs
-	# We'll use a Vector2 to store the raw input direction
 	var input_direction = Vector2.ZERO
 	
 	# Check each movement action
@@ -94,20 +114,86 @@ func _handle_input(delta: float) -> void:
 		input_direction.x += 1
 	
 	# IMPORTANT: Normalize the input direction to prevent diagonal speed boost
-	# Without normalize(), moving diagonally would give sqrt(2) times speed increase
-	# Example: right(1,0) + up(0,-1) = (1,-1) with magnitude ~1.41
-	# After normalize: (0.707, -0.707) with magnitude 1.0
 	if input_direction != Vector2.ZERO:
 		input_direction = input_direction.normalized()
-		
-		# Update facing direction for animations and throwing
 		facing_direction = input_direction
-		
-		# Accelerate towards max speed in the input direction
 		velocity = velocity.move_toward(input_direction * MAX_SPEED, ACCELERATION * delta)
 	else:
-		# No input detected - apply friction (deceleration)
 		velocity = velocity.move_toward(Vector2.ZERO, FRICTION * delta)
+	
+	# Check for throw input
+	if Input.is_action_just_pressed("throw_stone"):
+		_attempt_throw()
+
+# ============================================================================
+# THROWING MECHANICS
+# ============================================================================
+
+## Attempt to throw a stone if cooldown has expired
+func _attempt_throw() -> void:
+	# Check if we can throw (cooldown expired)
+	if not can_throw:
+		return
+	
+	# Calculate direction to mouse cursor
+	# get_global_mouse_position() gets the mouse location in world space
+	var mouse_position = get_global_mouse_position()
+	var throw_direction = (mouse_position - global_position).normalized()
+	
+	# Spawn the stone at player position
+	var stone = _spawn_stone(throw_direction)
+	
+	if stone:
+		# Start the throw cooldown
+		_start_throw_cooldown()
+		
+		# Play throw animation
+		if animated_sprite.animation != "throw":
+			animated_sprite.play("throw")
+		
+		# Emit signal for stats tracking
+		stone_thrown.emit()
+		
+		print("Stone thrown toward ", throw_direction)
+
+## Spawn a stone projectile and return it
+func _spawn_stone(direction: Vector2) -> Node2D:
+	# Load the stone scene
+	var stone_scene = load(STONE_SCENE_PATH)
+	
+	if stone_scene == null:
+		push_error("Failed to load stone scene at ", STONE_SCENE_PATH)
+		return null
+	
+	# Create an instance of the stone
+	var stone = stone_scene.instantiate()
+	
+	# Set the stone's starting position (at player)
+	stone.global_position = global_position
+	
+	# Set the stone's direction
+	stone.set_direction(direction)
+	
+	# Add the stone to the scene
+	# Use get_parent() to add it to the world level, not as a child of the player
+	get_parent().add_child(stone)
+	
+	return stone
+
+## Start the throw cooldown timer
+func _start_throw_cooldown() -> void:
+	can_throw = false
+	throw_cooldown_remaining = THROW_COOLDOWN
+
+## Update the throw cooldown timer every frame
+func _update_throw_cooldown(delta: float) -> void:
+	if not can_throw:
+		throw_cooldown_remaining -= delta
+		
+		# Check if cooldown has expired
+		if throw_cooldown_remaining <= 0.0:
+			can_throw = true
+			throw_cooldown_remaining = 0.0
 
 # ============================================================================
 # ANIMATION HANDLING
@@ -116,16 +202,16 @@ func _handle_input(delta: float) -> void:
 ## Update the animation sprite based on velocity and state
 func _update_animation() -> void:
 	# Check if player is moving
-	if velocity.length() > 10.0:  # Threshold to avoid animation jitter at low speeds
-		# Play walk animation
-		if animated_sprite.animation != "walk":
+	if velocity.length() > 10.0:
+		# Play walk animation only if not already playing throw or hurt
+		if animated_sprite.animation not in ["throw", "hurt"]:
 			animated_sprite.play("walk")
 		
 		# Rotate sprite to face movement direction
 		_update_sprite_direction()
 	else:
-		# Player is idle
-		if animated_sprite.animation != "idle":
+		# Player is idle - only switch to idle if not playing throw or hurt
+		if animated_sprite.animation not in ["throw", "hurt"]:
 			animated_sprite.play("idle")
 
 ## Update sprite rotation/flipping based on facing direction
@@ -134,11 +220,9 @@ func _update_sprite_direction() -> void:
 	var angle = velocity.angle()
 	
 	# Simple 4-direction system: snap to 90-degree angles
-	# This makes animations cleaner without needing diagonal frames
 	var snapped_angle = snappedf(angle, PI / 2)
 	
 	# Map angle to frame direction
-	# 0 = right, PI/2 = down, PI or -PI = left, -PI/2 = up
 	match snapped_angle:
 		0:  # Right
 			animated_sprite.rotation = 0
@@ -160,7 +244,6 @@ func _update_sprite_direction() -> void:
 ## Smoothly update camera position to follow player
 func _update_camera() -> void:
 	# Camera follows player with smooth easing
-	# This prevents jittery camera movement and creates a more polished feel
 	camera.global_position = camera.global_position.lerp(
 		global_position,
 		CAMERA_FOLLOW_SPEED
@@ -172,4 +255,4 @@ func _update_camera() -> void:
 
 ## Print current player state for debugging
 func _print_debug() -> void:
-	print_debug("Velocity: ", velocity, " | Facing: ", facing_direction)
+	print_debug("Velocity: ", velocity, " | Facing: ", facing_direction, " | Can throw: ", can_throw)
