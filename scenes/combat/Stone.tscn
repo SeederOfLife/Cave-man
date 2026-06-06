@@ -1,0 +1,38 @@
+[gd_scene load_steps=3 format=3 uid="uid=2001"]
+
+[ext_resource type="Script" path="res://scenes/combat/Stone.gd" id="1"]
+[ext_resource type="Script" path="res://scenes/effects/Particle_Impact.gd" id="2"]
+
+[node name="Stone" type="RigidBody2D"]
+script = ExtResource("1")
+gravity_scale = 0.0
+collision_layer = 4
+collision_mask = 17
+
+# Stone Node Tree:
+# Stone [RigidBody2D]
+# ├── CollisionShape2D (CircleShape2D, radius 3)
+# ├── Sprite2D (visual representation)
+# └── CPUParticles2D (impact effect)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+# TODO: In editor, add CircleShape2D with radius 3
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+# TODO: Add a simple stone sprite or placeholder ColorRect
+# For now, leave this empty - will show a white circle at runtime
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
+emitting = false
+amount = 8
+lifetime = 0.5
+texture = SubResource("NoiseTexture2D")
+script = ExtResource("2")
+
+# Particle settings for impact burst
+one_shot = true
+emission_shape = 0
+spread = 180.0
+initial_velocity_min = 50.0
+initial_velocity_max = 150.0
+gravity = Vector3(0, 200, 0)
