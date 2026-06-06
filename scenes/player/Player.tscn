@@ -1,0 +1,28 @@
+[gd_scene load_steps=2 format=3 uid="uid=1002"]
+
+[ext_resource type="Script" path="res://scenes/player/Player.gd" id="1"]
+
+[node name="Player" type="CharacterBody2D"]
+script = ExtResource("1")
+
+# Player Node Tree:
+# Player [CharacterBody2D] - Root node, handles physics and movement
+#   ├── CollisionShape2D - Collision detection (attach a CapsuleShape2D or CircleShape2D)
+#   ├── AnimatedSprite2D - Displays player animations
+#   ├── Camera2D - Follows player, smoothed
+#   └── RayCast2D (optional for future line-of-sight, Task 5)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+# TODO: In Godot editor, select this node and add a CircleShape2D or CapsuleShape2D
+# Use a radius of ~8 pixels for the caveman
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+# TODO: In Godot editor:
+# 1. Import sprite sheet (caveman_idle.png, caveman_walk.png, etc.)
+# 2. Create an AnimationPlayer resource
+# 3. Add animations: idle, walk, throw, hurt
+# For now, this will be empty and we'll populate it in the editor
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = 2.0
+# Camera will smoothly follow player with easing
