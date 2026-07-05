@@ -22,9 +22,11 @@ Le jeu vit dans `js/*.js`, des scripts classiques (pas de modules) chargés **da
 | `input.js` | clavier/souris, touch |
 | `world.js` | layout, utils, génération d'étage, contenu des salles |
 | `state.js` | start de partie, solidité, fx |
+| `sprites-beasts.js` | sprites des bêtes ajoutées (spider, boar, slither-man) |
 | `craft.js` | loot, craft, actives, pause/restart |
 | `update.js` | boucle principale, update(dt) |
 | `combat.js` | IA boss, transitions, dégâts |
+| `enemies.js` | IA des bêtes non-boss (chase, flee, spit, lunge, zigzag) |
 | `render-room.js` / `render-fx.js` | rendu salle / helpers de dessin + lighting |
 | `comic.js` | passe print comic : points Ben-Day, speed lines, POW bursts |
 | `hud.js` | HUD, touch UI |
@@ -52,7 +54,7 @@ Le jeu vit dans `js/*.js`, des scripts classiques (pas de modules) chargés **da
 | Commande | 🟢 Vert | 🔴 Rouge = ne pas pousser |
 |---|---|---|
 | `node scripts/check-sizes.mjs` | tous les fichiers sous 300 lignes | découper d'abord |
-| `node tests/smoke.mjs` | `12 passed, 0 failed` | fonction critique cassée |
+| `node tests/smoke.mjs` | `0 failed` | fonction critique cassée |
 
 Puis vérifier à la main dans un navigateur pour tout changement de gameplay : un étage de cave complet, un craft, un combat de tower, et Restart Room du menu pause dans une salle de cave ET une salle de tower.
 

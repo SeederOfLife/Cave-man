@@ -35,7 +35,7 @@ Everything is plain HTML/CSS/JavaScript with zero dependencies, so it works offl
 
 ```
 node scripts/check-sizes.mjs   # all js files under 300 lines
-node tests/smoke.mjs           # 12 passed, 0 failed
+node tests/smoke.mjs           # 0 failed
 ```
 
 ## Roadmap

@@ -27,7 +27,7 @@ function drawCraftPanel(){
   ctx.fillStyle='#c1642a';ctx.fillText('KNAPPING & HAFTING',px+pw/2,py+30);
   ctx.font='10px Trebuchet MS';
   const np=REC.filter(x=>x.kind==='passive'&&game.crafted[x.id]).length;
-  ctx.fillStyle='#8a7660';ctx.fillText('CRAFTS '+np+'/3 · TOOLS '+game.actives.length+'/2 · '+(IS_TOUCH?'TAP TO CRAFT':'[1-8] CRAFT · [C] CLOSE'),px+pw/2,py+48);
+  ctx.fillStyle='#8a7660';ctx.fillText('CRAFTS '+np+'/3 · TOOLS '+game.actives.length+'/2 · '+(IS_TOUCH?'TAP TO CRAFT':'[1-9,0] CRAFT · [C] CLOSE'),px+pw/2,py+48);
   ctx.textAlign='left';
   // close button
   const cbx=px+pw-28,cby=py+26;

@@ -64,7 +64,7 @@ function drawHUD(){
   }
   // desktop tool slots
   if(!IS_TOUCH){
-    const slotIcons={bola:SPR.bola,dart:SPR.obsidian,fist:SPR.rock};
+    const slotIcons={bola:SPR.bola,dart:SPR.obsidian,fist:SPR.rock,ember:SPR.torch};
     const labels=['Q','E'];
     for(let s2=0;s2<2;s2++){
       const bx2=VW-96+s2*48,by2=VH-46;
@@ -124,7 +124,7 @@ function drawTouchUI(){
     ctx.globalAlpha=1;
   }
   // tool buttons
-  const slotIcons={bola:SPR.bola,dart:SPR.obsidian,fist:SPR.rock};
+  const slotIcons={bola:SPR.bola,dart:SPR.obsidian,fist:SPR.rock,ember:SPR.torch};
   const t0x=aimMode==='twin'?VW-56:VW-140,t0y=aimMode==='twin'?VH-190:VH-70;
   const t1x=aimMode==='twin'?VW-116:VW-160,t1y=aimMode==='twin'?VH-170:VH-134;
   touch.btns.tool0={x:t0x,y:t0y,r:24};

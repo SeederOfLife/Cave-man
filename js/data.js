@@ -17,8 +17,10 @@ const REC=[
  {id:'bola',  kind:'active', name:'BOLA',          cost:{bone:1,sinew:1},              fx:'TOOL · SNARES BEASTS',      lore:'two stones, one cord. the legs stop first.'},
  {id:'dart',  kind:'active', name:'OBSIDIAN DART', cost:{obsidian:1,wood:1,feather:1}, fx:'TOOL · PIERCING SNIPE',     lore:'a sliver of night on a straight-grained shaft.'},
  {id:'fist',  kind:'active', name:"URM'S FIST",    cost:{obsidian:1,bone:1,sinew:1},   fx:'TOOL · GROUND SLAM',        lore:"the mountain's own knuckle, borrowed briefly."},
+ {id:'sling', kind:'passive',name:'HUNTER SLING',  cost:{sinew:1,flint:1},             fx:'THROW TWO STONES',          lore:'one cord, two stones. urm counts neither.'},
+ {id:'ember', kind:'active', name:'EMBER OF URM',  cost:{wood:1,flint:1,feather:1},    fx:'TOOL · FIRE BURST',         lore:'fire remembered. the dark remembers too.'},
 ];
-const ACD_MAX={bola:4,dart:5,fist:7};
+const ACD_MAX={bola:4,dart:5,fist:7,ember:6};
 const POW_WORDS=['KRAK!','THWOK!','WHUMP!','CRUNCH!','BONK!'];
 const DEPTH_LORE=['THE CAVE SWALLOWS YOU','OLD BONES. OLDER WALLS.','BLACK GLASS GROWS HERE','THE PAINTINGS WATCH BACK','SLITHER-MARKS IN THE DUST','YOU HEAR THE TOWER BREATHE','ROOTS OF THE FIRST TOWER','BEFORE IRON. BEFORE PRAYERS. URM WAS.','THE COILED ONE DREAMED HERE ONCE','WHAT SLEEPS BELOW WAS OLD WHEN URM WAS YOUNG'];
 const TOWER_LORE=['GHUR, FIRST OF BEARS, BARS THE WAY','A SLITHER-PRIEST HISSES YOUR NAME','THE TOWER REMEMBERS BEING WORSHIPPED','THEY BUILT IT TO REACH THE COILED ONE. THEY DUG DOWN.','PRAY AND URM SENDS DOOM. CLIMB, HUNTER.'];

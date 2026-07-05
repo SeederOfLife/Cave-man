@@ -57,7 +57,7 @@ Object.defineProperty(sandbox.window, 'innerHeight', { value: 600 });
 vm.createContext(sandbox);
 
 const src = files.map(f => readFileSync(join(ROOT, f), 'utf8')).join('\n')
-  + `\n;globalThis.__T = { start, update, render, craft, keepInRoom, newTowerFloor, checkClear, REC, keys,
+  + `\n;globalThis.__T = { start, update, render, craft, keepInRoom, newTowerFloor, checkClear, newEnemy, REC, keys,
        get game() { return game }, get TILE() { return TILE } };`;
 vm.runInContext(src, sandbox, { filename: 'game-concat.js' });
 const T = sandbox.__T;
@@ -105,7 +105,17 @@ T.game.cur.live.length = 0;
 T.checkClear(T.game.cur);
 assert(T.game.cur.cleared, 'gardien mort → salle clear');
 
-// 6. render ne crash pas (ctx stub), y compris POW burst, speed lines et passe comic
+// 6. nouveaux monstres : spawn direct + 2 s d'IA (lunge du boar, zigzag spider, spit slither)
+for (const t of ['spider', 'boar', 'slither']) T.game.cur.live.push(T.newEnemy(t, 3 * T.TILE, 3 * T.TILE, 5));
+for (let i = 0; i < 120; i++) T.update(1 / 60);
+assert(T.game.cur.live.every(e => Number.isFinite(e.x) && Number.isFinite(e.y)), 'spider/boar/slither : IA stable');
+
+// 7. ember : explose à l'expiration sans crash
+T.game.stones.push({ x: 3 * T.TILE, y: 3 * T.TILE, vx: 0, vy: 0, life: 0.05, dmg: 2, pierce: 0, ember: true });
+for (let i = 0; i < 10; i++) T.update(1 / 60);
+assert(T.game.stones.every(s => !s.ember), 'ember blast déclenché');
+
+// 8. render ne crash pas (ctx stub), y compris POW burst, speed lines et passe comic
 T.newTowerFloor();
 const boss = T.game.cur.live.find(b => b.boss);
 boss.state = 'charge'; boss.cdx = 1; boss.cdy = 0;

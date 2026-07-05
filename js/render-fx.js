@@ -93,6 +93,11 @@ function renderLight(){
     light(ORX+1.5*TILE,ORY+(R-1.5)*TILE,TILE*2,.55);
     light(ORX+(C-1.5)*TILE,ORY+(R-1.5)*TILE,TILE*2,.55);
     if(game.cur.type==='exit'||game.cur.type==='tower')light(ORX+8.5*TILE,ORY+5.5*TILE,TILE*2,.6);
+    // open doors glow through the dark so exits always read
+    if(roomDoorsOpen(game.cur))for(const d in game.cur.doors){
+      if(game.cur.doors[d])light(ORX+(DOOR[d].ti+.5)*TILE,ORY+(DOOR[d].tj+.5)*TILE,TILE*2.2,.6);
+    }
+    for(const st of game.stones)if(st.ember)light(ORX+st.x,ORY+st.y,TILE*2.5,.85);
     const boss=game.cur.live.find(e=>e.boss);
     if(boss)light(ORX+boss.x,ORY+boss.y,TILE*3,.7);
   }

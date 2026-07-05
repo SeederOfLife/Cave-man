@@ -25,10 +25,19 @@ The cave gives nothing freely, but everything can be taken. This is the farm loo
 | **FLINT** | Break grey rocks (3 hits, 60%) | Knapped by striking — lithic reduction, humanity's first industry |
 | **WOOD** | Break pale root-stalks (2 hits, 90%) | Shafts, hafts, handles — the skeleton of every tool |
 | **BONE** | Any slain beast | Soft-hammer knapping tools, awls, charm-work |
-| **SINEW** | Cave bears (55%) | The cord that hafts blade to shaft — nothing holds without it |
+| **SINEW** | Cave bears (55%), spiders (50%), boars (40%) | The cord that hafts blade to shaft — nothing holds without it |
 | **FEATHER** | Bats (50%) | Fletching — makes a thrown thing fly straight |
-| **FANG** | Dinos (55%) | Trophy and totem — proof the beast lost |
-| **OBSIDIAN** | Black-glass rocks, cave 3+ (4 hits, 85%) | Sharper than steel; the deep's own edge |
+| **FANG** | Dinos (55%), boars (40%), slither-men (45%) | Trophy and totem — proof the beast lost |
+| **OBSIDIAN** | Black-glass rocks, cave 3+ (4 hits, 85%); slither-men (40%) | Sharper than steel; the deep's own edge |
+
+## The Beasts
+
+- **Bat** — fast, wobbling, flies over rocks. The cave's small change.
+- **Cave bear** — slow bulk, hits hard. Sinew walks on four legs.
+- **Spitting dino** — keeps its distance and spits. Never learned the world moved on.
+- **Cave spider** — one stone kills it, if the stone can catch it. Scuttles in zigzags; its silk is the finest sinew.
+- **Boar of the roots** — stands still, snorts, then CHARGES. Sidestep the lunge, punish the recovery. (Caves 2+.)
+- **Slither-man** — the drowned builders' children. Holds its ground, spits like a dino, endures like a bear, and drops the black glass it was buried with. (Caves 4+, and beside the Slither-Priest in the Tower.)
 
 ## Knapping & Hafting (press C)
 
@@ -40,6 +49,8 @@ Six hand-made crafts, each a combination of two materials — one hard thing, on
 4. **OBSIDIAN EDGE** — obsidian + flint. *Black glass from the deep. It remembers being fire.* → +2 damage.
 5. **BONE TOTEM** — bone + fang. *Urm says nothing. The totem hums anyway.* → +1 heart.
 6. **FEATHER FLETCH** — feather + wood. *Bat-feather guides the stone's dreaming.* → throw much faster.
+7. **HUNTER SLING** — sinew + flint. *One cord, two stones. Urm counts neither.* → every throw hurls two stones in a spread.
+8. **EMBER OF URM** (tool) — wood + flint + feather. *Fire remembered. The dark remembers too.* → hurls a burning ember that bursts in a small fire blast and lights the dark as it flies.
 
 ## The Rooms
 

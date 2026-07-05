@@ -12,7 +12,7 @@ window.addEventListener('keydown',e=>{keys[e.code]=true;
     if(game.craftOpen)game.craftOpen=false;
     else setPause(!game.paused);
   }
-  if(game&&game.craftOpen&&/^Digit[1-8]$/.test(e.code))craft(parseInt(e.code[5])-1);
+  if(game&&game.craftOpen&&/^Digit[0-9]$/.test(e.code))craft(e.code==='Digit0'?9:parseInt(e.code[5])-1);
 });
 window.addEventListener('keyup',e=>{keys[e.code]=false;});
 cvs.addEventListener('mousemove',e=>{const r=cvs.getBoundingClientRect();mouse.x=e.clientX-r.left;mouse.y=e.clientY-r.top;});

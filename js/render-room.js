@@ -49,14 +49,20 @@ function renderRoom(room,ox,oy,active){
       if(j===0&&!d&&v>.62&&v<.75)drawPainting(x,y,v,tower);
       if(d&&room.doors[d]){
         const open=roomDoorsOpen(room);
+        const ns=(d==='n'||d==='s');
         ctx.fillStyle='#100a06';
-        if(d==='n'||d==='s')ctx.fillRect(x+4,y,TILE-8,TILE);else ctx.fillRect(x,y+4,TILE,TILE-8);
+        if(ns)ctx.fillRect(x+4,y,TILE-8,TILE);else ctx.fillRect(x,y+4,TILE,TILE-8);
+        // carved doorposts so doors read at a glance
+        ctx.fillStyle=tower?'#4a4a66':'#7a5c38';
+        if(ns){ctx.fillRect(x,y,5,TILE+1);ctx.fillRect(x+TILE-4,y,5,TILE+1);}
+        else{ctx.fillRect(x,y,TILE+1,5);ctx.fillRect(x,y+TILE-4,TILE+1,5);}
         if(!open){
           const sl=room.slabT>0?Math.sin(room.slabT*40)*2:0;
           ctx.drawImage(SPR.slab,x+3+sl,y+3,TILE-6,TILE-6);
         } else {
-          ctx.fillStyle='rgba(255,166,62,.1)';
-          ctx.fillRect(d==='n'||d==='s'?x+4:x,d==='n'||d==='s'?y:y+4,d==='n'||d==='s'?TILE-8:TILE,d==='n'||d==='s'?TILE:TILE-8);
+          const pulse=.16+Math.sin(game.time*4)*.09;
+          ctx.fillStyle='rgba(255,166,62,'+pulse+')';
+          ctx.fillRect(ns?x+4:x,ns?y:y+4,ns?TILE-8:TILE,ns?TILE:TILE-8);
         }
       }
     } else {
@@ -189,6 +195,10 @@ function renderRoom(room,ox,oy,active){
         ctx.save();ctx.translate(st.x,st.y);ctx.rotate(Math.atan2(st.vy,st.vx));
         ctx.drawImage(SPR.obsidian,-TILE*.22,-TILE*.22,TILE*.44,TILE*.44);
         ctx.restore();
+      } else if(st.ember){
+        const eg=ctx.createRadialGradient(st.x,st.y,1,st.x,st.y,TILE*.22);
+        eg.addColorStop(0,'#ffe9a8');eg.addColorStop(.5,'#ffb545');eg.addColorStop(1,'rgba(255,110,30,0)');
+        ctx.fillStyle=eg;ctx.beginPath();ctx.arc(st.x,st.y,TILE*.22,0,7);ctx.fill();
       } else {
         ctx.drawImage(SPR.stone,st.x-TILE*.16,st.y-TILE*.16,TILE*.32,TILE*.32);
       }

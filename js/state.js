@@ -15,7 +15,7 @@ function start(np){
     stones:[],spits:[],bolas:[],parts:[],floats:[],
     trans:null,time:0,clearFlash:0,
     mats:{flint:0,wood:0,bone:0,sinew:0,feather:0,fang:0,obsidian:0},
-    crafted:{},actives:[],acd:{bola:0,dart:0,fist:0},
+    crafted:{},actives:[],acd:{bola:0,dart:0,fist:0,ember:0},
     pierce:0,projMul:1,craftOpen:false,
   };
   game.players.push(mkPlayer(0));

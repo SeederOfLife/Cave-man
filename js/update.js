@@ -64,6 +64,7 @@ function update(dt){
       const a=aimOf(P);
       const sp=TILE*10.5*game.projMul;
       game.stones.push({x:P.x,y:P.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:1.2*game.projMul,dmg:P.dmg,pierce:game.pierce});
+      if(game.crafted.sling)game.stones.push({x:P.x,y:P.y,vx:Math.cos(a+.16)*sp,vy:Math.sin(a+.16)*sp,life:1.2*game.projMul,dmg:P.dmg,pierce:game.pierce});
       sfx('throw');
     }
     if(keys[K.a0])useActive(0,P);
@@ -103,7 +104,7 @@ function update(dt){
   for(let i=game.stones.length-1;i>=0;i--){
     const s=game.stones[i];
     s.x+=s.vx*dt;s.y+=s.vy*dt;s.life-=dt;
-    if(s.life<=0){game.stones.splice(i,1);continue;}
+    if(s.life<=0){if(s.ember)emberBlast(s,room);game.stones.splice(i,1);continue;}
     const ti=s.x/TILE|0,tj=s.y/TILE|0;
     if(solidAt(room,s.x,s.y,false)){
       const inRing=(ti<=0||tj<=0||ti>=C-1||tj>=R-1);
@@ -126,6 +127,7 @@ function update(dt){
       } else {
         burst(s.x,s.y,'#a39a8e',6,TILE*2.4);sfx('rock');
       }
+      if(s.ember)emberBlast(s,room);
       game.stones.splice(i,1);continue;
     }
     for(const e of room.live){
@@ -135,7 +137,7 @@ function update(dt){
         burst(s.x,s.y,s.dart?'#6a5490':'#d0392b',8,TILE*3);sfx('hit');shake=Math.min(shake+3.5,7);
         floatText(e.x,e.y-e.r-8,'-'+s.dmg,s.dart?'#b9a6e8':'#ffd166');
         if(e.hp<=0)onEnemyDeath(room,e);
-        if(s.pierce>0){s.pierce--;}else{game.stones.splice(i,1);}
+        if(s.pierce>0){s.pierce--;}else{if(s.ember)emberBlast(s,room);game.stones.splice(i,1);}
         break;
       }
     }
@@ -156,32 +158,8 @@ function update(dt){
     if(hitP)game.spits.splice(i,1);
   }
 
-  // ---- enemies ----
-  for(const e of room.live){
-    e.t+=dt;if(e.hitFlash>0)e.hitFlash-=dt;if(e.spitCd>0)e.spitCd-=dt;
-    if(e.slow>0)e.slow-=dt;
-    const T=nearestPlayer(e.x,e.y);
-    if(!T)break;
-    if(e.boss){updateBoss(e,T,dt,room);continue;}
-    const dToP=Math.hypot(T.x-e.x,T.y-e.y)||1;
-    let tx,ty;
-    if(e.ranged&&dToP<TILE*3.4){tx=(e.x-T.x)/dToP;ty=(e.y-T.y)/dToP;}
-    else{tx=(T.x-e.x)/dToP;ty=(T.y-e.y)/dToP;}
-    if(e.ranged&&e.spitCd<=0){
-      e.spitCd=1.6;
-      const a=Math.atan2(T.y-e.y,T.x-e.x);
-      game.spits.push({x:e.x,y:e.y,vx:Math.cos(a)*TILE*4.4,vy:Math.sin(a)*TILE*4.4,life:2});
-    }
-    if(e.fly){tx+=Math.cos(e.t*7)*.55;ty+=Math.sin(e.t*5.3)*.55;}
-    const eff=e.slow>0?e.spd*.35:e.spd;
-    e.vx+=(tx*eff-e.vx)*Math.min(1,dt*6);
-    e.vy+=(ty*eff-e.vy)*Math.min(1,dt*6);
-    moveCircle(room,e,e.vx*dt,e.vy*dt,e.fly);
-    keepInRoom(e);
-    for(const p of alivePlayers()){
-      if(Math.hypot(p.x-e.x,p.y-e.y)<e.r+p.r-2)hurtPlayer(p,e.dmg,e.type.toUpperCase());
-    }
-  }
+  // ---- enemies (AI in enemies.js) ----
+  updateEnemies(room,dt);
 
   // ---- drops ----
   for(let i=room.drops.length-1;i>=0;i--){

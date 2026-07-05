@@ -103,11 +103,16 @@ function spawnEnemies(room,depth,entryDir){
   const defs=[];
   function pick(pool,n){const out=[];for(let i=0;i<n;i++)out.push(pool[Math.random()*pool.length|0]);return out;}
   const mult=game&&game.twoP?1:0;
-  if(room.type==='normal')defs.push(...pick(['bat','bat','bear'],2+Math.min(depth,3)+mult));
+  if(room.type==='normal'){
+    const pool=['bat','bat','bear','spider'];
+    if(depth>=2)pool.push('boar');
+    if(depth>=4)pool.push('slither','slither');
+    defs.push(...pick(pool,2+Math.min(depth,3)+mult));
+  }
   else if(room.type==='water'){defs.push('bat','bat');if(depth>=2)defs.push('dino');if(mult)defs.push('bat');}
   else if(room.type==='dino'){defs.push('dino','dino');if(depth>=3)defs.push('bat');if(mult)defs.push('dino');}
-  else if(room.type==='exit'){defs.push('bear');if(depth>=2)defs.push('bear');if(depth>=4)defs.push('dino');if(mult)defs.push('bat');}
-  else if(room.type==='treasure'&&depth>=3)defs.push('bat');
+  else if(room.type==='exit'){defs.push('bear');if(depth>=2)defs.push(depth>=3?'boar':'bear');if(depth>=4)defs.push('slither');if(mult)defs.push('bat');}
+  else if(room.type==='treasure'&&depth>=3)defs.push(depth>=4?'spider':'bat');
   const ed=DOOR[OPP[entryDir]||'s'];
   const cells=[];
   for(let j=1;j<R-1;j++)for(let i=1;i<C-1;i++){
@@ -128,12 +133,16 @@ function newEnemy(type,x,y,depth){
     bat:{hp:2,spd:TILE*2.3,dmg:1,r:TILE*.24,fly:true,spr:SPR.bat,f:.85},
     bear:{hp:6+depth,spd:TILE*1.25,dmg:2,r:TILE*.42,fly:false,spr:SPR.bear,f:1.3},
     dino:{hp:3+((depth/2)|0),spd:TILE*1.1,dmg:1,r:TILE*.3,fly:false,spr:SPR.dino,f:1.05},
+    spider:{hp:1,spd:TILE*3.0,dmg:1,r:TILE*.2,fly:false,spr:SPR.spider,f:.72},
+    boar:{hp:4+depth,spd:TILE*1.55,dmg:2,r:TILE*.34,fly:false,spr:SPR.boar,f:1.1},
+    slither:{hp:5+depth,spd:TILE*1.5,dmg:2,r:TILE*.3,fly:false,spr:SPR.slither,f:1.15},
   }[type];
   const D=DIFF[difficulty];
   const hp2=Math.max(1,Math.round(B.hp*D.hp));
   const dmg2=Math.max(1,Math.round(B.dmg*D.dmg));
   return{type,x,y,hp:hp2,maxhp:hp2,spd:B.spd,dmg:dmg2,r:B.r,fly:B.fly,spr:B.spr,sc:TILE*B.f/S,
-    ranged:type==='dino',vx:0,vy:0,t:Math.random()*10,hitFlash:0,wanderA:Math.random()*6.3,wanderT:0,spitCd:1+Math.random(),slow:0};
+    ranged:type==='dino'||type==='slither',brave:type==='slither',lungeCd:1.2+Math.random(),
+    vx:0,vy:0,t:Math.random()*10,hitFlash:0,wanderA:Math.random()*6.3,wanderT:0,spitCd:1+Math.random(),slow:0};
 }
 function newBoss(tier){
   const serpent=tier>=2;

@@ -8,6 +8,9 @@ function dropLoot(room,e){
   if(e.type==='bat'){if(ch<.5)mat='feather';else if(ch<.7)mat='bone';}
   else if(e.type==='bear'){if(ch<.55)mat='sinew';else if(ch<.9)mat='bone';}
   else if(e.type==='dino'){if(ch<.55)mat='fang';else if(ch<.85)mat='bone';}
+  else if(e.type==='spider'){if(ch<.5)mat='sinew';else if(ch<.65)mat='bone';}
+  else if(e.type==='boar'){if(ch<.4)mat='fang';else if(ch<.8)mat='sinew';}
+  else if(e.type==='slither'){if(ch<.4)mat='obsidian';else if(ch<.85)mat='fang';}
   if(mat)room.drops.push({x:e.x,y:e.y,mat,t:0});
 }
 function craft(i){
@@ -68,6 +71,10 @@ function useActive(slot,P){
     game.acd.dart=ACD_MAX.dart;
     game.stones.push({x:P.x,y:P.y,vx:Math.cos(a)*TILE*16,vy:Math.sin(a)*TILE*16,life:1.0,dmg:4,pierce:99,dart:true});
     sfx('throw');
+  } else if(id==='ember'){
+    game.acd.ember=ACD_MAX.ember;
+    game.stones.push({x:P.x,y:P.y,vx:Math.cos(a)*TILE*9,vy:Math.sin(a)*TILE*9,life:.9,dmg:2,pierce:0,ember:true});
+    sfx('throw');
   } else if(id==='fist'){
     game.acd.fist=ACD_MAX.fist;
     sfx('slam');shake=Math.min(shake+9,12);
@@ -86,6 +93,20 @@ function useActive(slot,P){
     for(const e2 of room.live)keepInRoom(e2);
     room.live=room.live.filter(e=>e.hp>0);
     checkClear(room);
+  }
+}
+function emberBlast(s,room){
+  // fire burst on impact/expiry: AoE damage; the stones-loop filter removes the dead
+  burst(s.x,s.y,'#ff8c2e',22,TILE*3.5);burst(s.x,s.y,'#ffe9a8',10,TILE*2);
+  sfx('slam');shake=Math.min(shake+4,8);
+  for(const e of room.live){
+    if(e.hp<=0)continue;
+    const d=Math.hypot(e.x-s.x,e.y-s.y);
+    if(d<TILE*1.3){
+      e.hp-=2;e.hitFlash=.15;
+      floatText(e.x,e.y-e.r-8,'-2','#ff8c2e');
+      if(e.hp<=0)onEnemyDeath(room,e);
+    }
   }
 }
 function onEnemyDeath(room,e){

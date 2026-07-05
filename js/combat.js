@@ -37,8 +37,8 @@ function updateBoss(e,T,dt,room){
   if(!e.summoned&&e.hp<=e.maxhp*.5){
     e.summoned=true;
     showMsg(e.serpent?'THE PRIEST CALLS THE DEEP...':'GHUR ROARS FOR HIS KIN...');
-    const adds=e.serpent?['bat','dino']:['bat','bat'];
-    if(e.tier>=3)adds.push('dino');
+    const adds=e.serpent?['slither','bat']:['bat','bat'];
+    if(e.tier>=3)adds.push(e.serpent?'slither':'boar');
     for(const a of adds){
       const ang=Math.random()*6.3;
       room.live.push(newEnemy(a,e.x+Math.cos(ang)*TILE*2,e.y+Math.sin(ang)*TILE*2,game.depth));
@@ -79,6 +79,7 @@ function updateTrans(dt){
     game.trans=null;
     if(!next.spawned&&['normal','water','dino','exit','treasure'].includes(next.type)){
       spawnEnemies(next,game.depth,dir);
+      for(const en of next.live)burst(en.x,en.y,'#6b5c4d',8,TILE*2);
       if(next.live.length>0){sfx('slam');shake=5;next.slabT=.35;}
       else next.cleared=true;
     } else if(!next.spawned){
