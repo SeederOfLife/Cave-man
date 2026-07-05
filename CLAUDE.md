@@ -1,0 +1,63 @@
+# CLAUDE.md — règles de travail sur Cave Man
+
+Lire `HANDOFF.md` pour l'architecture complète avant de toucher au code. Lire `CAVEMAN_LORE.md` avant d'écrire tout texte joueur, item ou ennemi — tout doit coller au monde (Urm le dieu-montagne silencieux, la First Tower, les slither-men, messages de jeu en CAVEMAN-SPEAK ALL CAPS, Grok parle à la troisième personne).
+
+## Ce projet
+
+Roguelike préhistorique en salles, style The Binding of Isaac. HTML/CSS/JS pur, zéro dépendance : le jeu doit toujours marcher offline depuis un double-clic sur `index.html`. Desktop (clavier+souris), mobile (joystick virtuel, auto-aim ou twin-stick), co-op 2 joueurs local. Vision long terme : MOBA en ligne autour de la First Tower.
+
+## Règle #1 — Un fichier, une job (NON-NÉGOCIABLE)
+
+- **Seuil : 300 lignes. Cible : 150–200 lignes.**
+- Un fichier dépasse 300 lignes → le découper AVANT d'ajouter des features.
+- Vérifier après chaque série de modifs : `node scripts/check-sizes.mjs`
+
+Le jeu vit dans `js/*.js`, des scripts classiques (pas de modules) chargés **dans l'ordre** par `index.html`. L'ordre de chargement est l'ordre des sections de l'ancien `game.js` monolithique — ne pas le changer sans vérifier les dépendances au chargement. Tout code qui s'exécute au chargement (pas seulement des déclarations) ne peut référencer que des fichiers chargés avant lui ; l'amorçage (`resize()`) vit dans `js/boot.js`, toujours dernier.
+
+| Fichier | Job |
+|---|---|
+| `core.js` | canvas & DPR, sfx |
+| `sprites.js` / `sprites-defs.js` | helpers de dessin / dictionnaire SPR + passe outline |
+| `data.js` | constantes (salles, recettes, lore), settings |
+| `input.js` | clavier/souris, touch |
+| `world.js` | layout, utils, génération d'étage, contenu des salles |
+| `state.js` | start de partie, solidité, fx |
+| `craft.js` | loot, craft, actives, pause/restart |
+| `update.js` | boucle principale, update(dt) |
+| `combat.js` | IA boss, transitions, dégâts |
+| `render-room.js` / `render-fx.js` | rendu salle / helpers de dessin + lighting |
+| `hud.js` | HUD, touch UI |
+| `panels.js` | panneau de craft, minimap |
+| `boot.js` | amorçage, toujours en dernier |
+
+## Règles projet (héritées du handoff — toujours valides)
+
+- Zéro dépendance : pas de framework, pas de build step, pas de npm package, pas d'asset externe (image, police, fichier audio).
+- Tout l'art est vectoriel procédural pré-rendu via `mkS()` ; tout nouveau sprite passe par `outlined()` (look cel-outline). Tout le son est synthétisé dans `sfx()`.
+- Tailles, vitesses et rayons en unités `TILE`, jamais en pixels codés en dur.
+- Chaque passe de rendu commence par `resetT(ctx)` (DPR-aware), jamais `setTransform` brut.
+- Tout changement doit marcher dans les 4 modes : desktop solo, desktop 2 joueurs, phone auto-aim, phone twin-stick. Tout nouvel élément interactif a un chemin clavier ET une hitbox touch (`touch.btns` dans `drawTouchUI`, ou `touch.panelRows` pour les panneaux).
+- **Ne jamais supprimer `keepInRoom()` ni ses appels** — il empêche les entités de sortir des salles après knockback.
+
+## Invariants gameplay
+
+- Limites de craft = design cœur : max 2 tools actifs et 3 crafts passifs par run (« choose like a hunter »).
+- Les matériaux sont l'économie — le nouveau contenu doit la nourrir (destructibles → drops, ennemis → table dans `dropLoot`).
+- Tower floor après chaque cave de profondeur divisible par 3, toujours avec un gardien qui scelle le trou de sortie jusqu'à sa mort.
+- Co-op : un joueur down revit avec 1 cœur à la transition de salle suivante ; le run ne finit que quand tous sont down.
+
+## Vérifications obligatoires avant chaque commit
+
+| Commande | 🟢 Vert | 🔴 Rouge = ne pas pousser |
+|---|---|---|
+| `node scripts/check-sizes.mjs` | tous les fichiers sous 300 lignes | découper d'abord |
+| `node tests/smoke.mjs` | `12 passed, 0 failed` | fonction critique cassée |
+
+Puis vérifier à la main dans un navigateur pour tout changement de gameplay : un étage de cave complet, un craft, un combat de tower, et Restart Room du menu pause dans une salle de cave ET une salle de tower.
+
+## Environnement dev
+
+- Git binary : `C:\Users\user palis\AppData\Local\GitHubDesktop\app-3.5.8\resources\app\git\cmd\git.exe`
+- Node en PowerShell : `$env:Path = "C:\Program Files\nodejs;" + $env:Path`
+- Commit style : `feat:` / `fix:` / `docs:` / `refactor:`
+- Test téléphone : GitHub Pages → https://seederoflife.github.io/Cave-man/

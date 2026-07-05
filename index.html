@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>CAVE MAN — The First Tower</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="wrap">
+  <canvas id="game"></canvas>
+  <div id="msg"></div>
+  <div id="controls"></div>
+  <div id="pause" class="hidden" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(5,3,2,.85);z-index:9;text-align:center">
+    <h1 style="font-size:30px;letter-spacing:6px;color:#c1642a;text-shadow:0 3px 10px #000;margin-bottom:20px;font-weight:800">PAUSED</h1>
+    <button class="pbtn" id="pbresume">RESUME</button>
+    <button class="pbtn" id="pbroom">RESTART ROOM</button>
+    <button class="pbtn" id="pbrun">RESTART RUN</button>
+    <button class="pbtn" id="pbtitle">TITLE SCREEN</button>
+  </div>
+  <div id="death" class="hidden" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(5,3,2,.88);z-index:9;text-align:center;color:#e8d9c0"></div>
+  <div id="overlay">
+    <h1>CAVE MAN</h1>
+    <h2>THE FIRST TOWER</h2>
+    <div class="keys">
+      BEFORE THE SECOND SLEEP OF THE WORLD, THE TRIBES WENT UNDER THE MOUNTAIN.<br>
+      <b style="color:#c1642a">URM</b> GAVE EACH CHILD ONE STONE — AND NO ANSWERS.<br>
+      EVERY THIRD CAVE, THE <b style="color:#ffa63e">FIRST TOWER</b> BREAKS THROUGH. GUARDIANS WAIT.<br>
+      FARM · CRAFT [C] · TWO TOOLS, THREE CRAFTS. CHOOSE LIKE A HUNTER.
+    </div>
+    <div class="aimlabel">AIMING MODE (PHONE)</div>
+    <div class="aimrow">
+      <button id="aimauto" class="sel">AUTO-AIM</button>
+      <button id="aimtwin">TWIN-STICK</button>
+    </div>
+    <div class="aimlabel">DIFFICULTY</div>
+    <div class="aimrow">
+      <button id="diffcub">CUB</button>
+      <button id="diffhunter" class="sel">HUNTER</button>
+      <button id="diffchosen">URM'S CHOSEN</button>
+    </div>
+    <div class="aimrow" style="margin-top:6px">
+      <button id="sndbtn" class="sel">SOUND ON</button>
+    </div>
+    <div style="margin-top:14px">
+      <button id="startbtn">ONE HUNTER</button>
+      <button id="start2btn">TWO HUNTERS</button>
+    </div>
+    <div class="keys">P1: WASD + MOUSE · Q/E TOOLS &nbsp;·&nbsp; P2 (KEYBOARD ONLY): ARROWS · ENTER · R-SHIFT/R-CTRL<br>ON PHONE: LEFT THUMB = MOVE · RIGHT = AIM OR THROW BUTTON</div>
+  </div>
+</div>
+<script src="js/core.js"></script>
+<script src="js/sprites.js"></script>
+<script src="js/sprites-defs.js"></script>
+<script src="js/data.js"></script>
+<script src="js/input.js"></script>
+<script src="js/world.js"></script>
+<script src="js/state.js"></script>
+<script src="js/craft.js"></script>
+<script src="js/update.js"></script>
+<script src="js/combat.js"></script>
+<script src="js/render-room.js"></script>
+<script src="js/render-fx.js"></script>
+<script src="js/hud.js"></script>
+<script src="js/panels.js"></script>
+<script src="js/boot.js"></script>
+</body>
+</html>
