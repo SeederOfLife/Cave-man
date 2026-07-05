@@ -92,7 +92,7 @@ function onEnemyDeath(room,e){
   game.kills++;
   dropLoot(room,e);
   burst(e.x,e.y,'#d0392b',e.boss?34:18,TILE*(e.boss?5:3.6));
-  floatText(e.x,e.y-e.r-14,e.boss?'FELLED!':'BONK!','#ff8c2e');
+  floatText(e.x,e.y-e.r-14,e.boss?'DOOM!':POW_WORDS[Math.random()*POW_WORDS.length|0],'#ff8c2e',true);
   if(e.boss){sfx('boss');shake=12;relicDrop();}
 }
 function checkClear(room){

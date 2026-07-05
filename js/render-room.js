@@ -26,6 +26,7 @@ function render(){
   drawMinimap();
   if(IS_TOUCH&&!game.craftOpen)drawTouchUI();
   drawCraftPanel();
+  drawComicPrint();
 }
 
 function renderRoom(room,ox,oy,active){
@@ -198,6 +199,7 @@ function renderRoom(room,ox,oy,active){
       ctx.restore();
     }
     for(const e of game.cur.live){
+      if(e.boss&&e.state==='charge')drawSpeedLines(e.x,e.y,e.cdx,e.cdy);
       ell(ctx,e.x,e.y+e.r*.9,e.r,e.r*.38,'rgba(0,0,0,.32)');
       const bobY=e.fly?Math.sin(e.t*8)*TILE*.08:0;
       const w=S*e.sc;
@@ -238,6 +240,12 @@ function renderRoom(room,ox,oy,active){
     ctx.globalAlpha=1;
     ctx.font='bold '+Math.max(13,TILE*.26)+'px Trebuchet MS';ctx.textAlign='center';
     for(const f of game.floats){
+      if(f.pow){
+        ctx.globalAlpha=Math.max(0,Math.min(1,f.life*1.6));
+        drawPow(f.x,f.y,f.txt,1+(1-f.life)*.3,f.rot||0);
+        ctx.font='bold '+Math.max(13,TILE*.26)+'px Trebuchet MS';ctx.textAlign='center';
+        continue;
+      }
       ctx.globalAlpha=Math.max(0,f.life);
       ctx.fillStyle='rgba(0,0,0,.7)';ctx.fillText(f.txt,f.x+1.5,f.y+1.5);
       ctx.fillStyle=f.color;ctx.fillText(f.txt,f.x,f.y);

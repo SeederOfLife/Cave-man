@@ -10,7 +10,11 @@ They pray — if you can call it prayer — to **URM, the Sleeping Mountain**. U
 
 Below the caves — below the bats, below the bears, below the spitting dinos that never learned the world had moved on — the tunnels grow strange. The walls turn to black glass. Slither-marks appear in the dust, made by nothing with legs. The old ones whisper that the deepest caves are not caves at all, but the buried **roots of the First Tower**: a thing built before men, by the ones who came before the first sleep, and never finished falling.
 
+The serpent-priests of the drowned kingdoms worshipped a god the tribes will not name at night: **the Coiled One**, the Great Serpent that dreamed beneath the world before the first sleep. The First Tower was not built to reach the sky — it was built to reach *down*, to where the Coiled One dreams. Its builders, the **slither-men**, did not all drown. Grok says the ones that survived learned to wear man-faces and walk among the tribes above. Grok smells them anyway.
+
 Every tribe tells the same prophecy differently. The tribe that climbs the First Tower — from its roots in the deep dark to its crown above the ice — will wake the mountain, or become it. Grok says the tower is older than Urm. Grok will not say it twice.
+
+*(Influences, for whoever writes next: Urm is cut from the same stone as Howard's Crom — a mountain god it is useless to pray to, who gives courage and strength at birth and nothing after, and sends only doom to those who beg. The slither-men are kin to the Serpent Men of "The Shadow Kingdom" — face-stealers who worship the Great Serpent. The visual register is old-school comics: heavy cel inks, Ben-Day dots, yellow caption boxes, onomatopoeia bursts — Silver Age color pulp meets Savage Sword savagery. Everything player-facing stays in ALL-CAPS caveman-speak.)*
 
 ## What the Cave Gives (Materials)
 

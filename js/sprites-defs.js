@@ -267,5 +267,5 @@ SPR.bola=mkS((g,s)=>{
 });
 // cel-style dark outlines: characters pop against every background,
 // pickups get a warm outline so saturation stays reserved for loot
-for(const k of ['caveman','caveman2','grok','bat','bear','dino','serpent'])SPR[k]=outlined(SPR[k],'#17100a',4);
+for(const k of ['caveman','caveman2','grok','bat','bear','dino','serpent'])SPR[k]=outlined(SPR[k],'#17100a',5);
 for(const k of ['meat','heart','flint','stone','rock','obrock','root','bone','slab','wood','sinew','feather','fang','obsidian','shrine','bola'])SPR[k]=outlined(SPR[k],'#1c130c',3);

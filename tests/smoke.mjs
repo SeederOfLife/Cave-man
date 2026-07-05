@@ -105,7 +105,11 @@ T.game.cur.live.length = 0;
 T.checkClear(T.game.cur);
 assert(T.game.cur.cleared, 'gardien mort → salle clear');
 
-// 6. render ne crash pas (ctx stub)
+// 6. render ne crash pas (ctx stub), y compris POW burst, speed lines et passe comic
+T.newTowerFloor();
+const boss = T.game.cur.live.find(b => b.boss);
+boss.state = 'charge'; boss.cdx = 1; boss.cdy = 0;
+T.game.floats.push({ x: 100, y: 100, txt: 'KRAK!', color: '#fff', life: 0.8, pow: true, rot: 0.1 });
 T.render();
 assert(true, 'render() sans crash');
 

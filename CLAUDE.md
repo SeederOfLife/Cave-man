@@ -26,6 +26,7 @@ Le jeu vit dans `js/*.js`, des scripts classiques (pas de modules) chargés **da
 | `update.js` | boucle principale, update(dt) |
 | `combat.js` | IA boss, transitions, dégâts |
 | `render-room.js` / `render-fx.js` | rendu salle / helpers de dessin + lighting |
+| `comic.js` | passe print comic : points Ben-Day, speed lines, POW bursts |
 | `hud.js` | HUD, touch UI |
 | `panels.js` | panneau de craft, minimap |
 | `boot.js` | amorçage, toujours en dernier |

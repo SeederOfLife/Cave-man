@@ -129,4 +129,4 @@ function burst(x,y,color,n,spd){
   for(let i=0;i<n;i++){const a=Math.random()*6.3,v=(0.3+Math.random()*.7)*spd;
     game.parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:.35+Math.random()*.3,color,size:2+Math.random()*3});}
 }
-function floatText(x,y,txt,color){game.floats.push({x,y,txt,color,life:1});}
+function floatText(x,y,txt,color,pow){game.floats.push({x,y,txt,color,life:1,pow:!!pow,rot:(Math.random()-.5)*.3});}

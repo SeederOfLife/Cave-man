@@ -106,11 +106,12 @@ function die(from){
   const ov=document.getElementById('death');
   ov.classList.remove('hidden');
   ov.innerHTML=`
-    <div style="font-size:14px;color:#c8402e;letter-spacing:5px;margin-bottom:12px">☠ THE TRIBE ENDS HERE ☠</div>
-    <h1 style="font-size:28px;letter-spacing:4px;color:#c1642a;text-shadow:0 3px 10px #000;margin-bottom:16px;font-weight:800">SLAIN BY ${from||'THE CAVE'}</h1>
+    <div class="caption">☠ THE TRIBE ENDS HERE ☠</div>
+    <h1 class="comic-title" style="font-size:34px;margin:14px 0 16px">SLAIN BY ${from||'THE CAVE'}</h1>
     <div style="font-size:15px;line-height:2;margin-bottom:20px">REACHED ${game.mode==='tower'?'TOWER '+game.towerTier:'CAVE '+game.depth}<br>BONKED <b style="color:#ffa63e">${game.kills}</b> BEAST${game.kills===1?'':'S'}</div>
     <div><button onclick="deathRestart()">ROCK AGAIN</button>
-    <button onclick="goTitle()">TITLE</button></div>`;
+    <button onclick="goTitle()">TITLE</button></div>
+    <div class="tbc">TO BE CONTINUED... ?</div>`;
 }
 function deathRestart(){
   document.getElementById('death').classList.add('hidden');
