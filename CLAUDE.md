@@ -69,4 +69,4 @@ Puis vérifier à la main dans un navigateur pour tout changement de gameplay : 
 - Git binary : `C:\Users\user palis\AppData\Local\GitHubDesktop\app-3.5.8\resources\app\git\cmd\git.exe`
 - Node en PowerShell : `$env:Path = "C:\Program Files\nodejs;" + $env:Path`
 - Commit style : `feat:` / `fix:` / `docs:` / `refactor:`
-- Test téléphone : GitHub Pages → https://seederoflife.github.io/Cave-man/
+- Test téléphone : Vercel (auto-déployé à chaque push sur main) → https://cave-man-project-game-2d.vercel.app/
