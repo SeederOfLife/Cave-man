@@ -153,7 +153,7 @@ function newBoss(tier){
     x:8.5*TILE,y:3.2*TILE,
     hp:bhp,maxhp:bhp,
     spd:TILE*(serpent?1.0:0.9),dmg:2,r:TILE*.6,fly:false,
-    spr:serpent?SPR.serpent:SPR.bear,sc:TILE*(serpent?2.2:2.5)/S,
+    spr:serpent?SPR.priest:SPR.ghur,sc:TILE*(serpent?2.2:2.5)/S,
     ranged:false,vx:0,vy:0,t:0,hitFlash:0,wanderA:0,wanderT:0,spitCd:2.5,slow:0,
     state:'chase',atkT:3,wind:0,charge:0,cdx:0,cdy:0,summoned:false,serpent,tier};
 }

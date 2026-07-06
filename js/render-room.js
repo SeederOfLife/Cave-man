@@ -172,6 +172,19 @@ function renderRoom(room,ox,oy,active){
     }
   }
 
+  // the Silent Trader (decor in start rooms — shop is opened anywhere with C)
+  if(room.type==='start'){
+    const tx=13.5*TILE,ty=2.5*TILE;
+    ell(ctx,tx,ty+TILE*.5,TILE*.28,TILE*.1,'rgba(0,0,0,.4)');
+    const tb=Math.sin(game.time*1.5)*1.5;
+    ctx.drawImage(SPR.trader,tx-TILE*.55,ty-TILE*.55+tb,TILE*1.1,TILE*1.1);
+    const gl=Math.sin(game.time*3)*.06+.14;
+    ctx.fillStyle='rgba(74,154,208,'+gl+')';
+    ctx.beginPath();ctx.arc(tx,ty,TILE*.7,0,7);ctx.fill();
+    ctx.fillStyle='#8ad0e2';ctx.font='bold '+Math.max(10,TILE*.2)+'px Trebuchet MS';ctx.textAlign='center';
+    ctx.fillText('[C] TRADE',tx,ty-TILE*.7);ctx.textAlign='left';
+  }
+
   // grok
   if(room.grok){
     const G=room.grok;

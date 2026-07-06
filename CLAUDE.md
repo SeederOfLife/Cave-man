@@ -23,7 +23,8 @@ Le jeu vit dans `js/*.js`, des scripts classiques (pas de modules) chargés **da
 | `input.js` | clavier/souris, touch |
 | `world.js` | layout, utils, génération d'étage, contenu des salles |
 | `state.js` | start de partie, solidité, fx |
-| `sprites-beasts.js` | sprites des bêtes ajoutées (spider, boar, slither-man) |
+| `sprites-beasts.js` | sprites des 6 bêtes (bat, ours, dino, spider, boar, slither-man) |
+| `sprites-boss.js` | sprites boss + npc : Ghur, Slither-Priest, Grok, Silent Trader |
 | `craft.js` | loot, actives (tools), pause/restart |
 | `stats.js` | recalcul des stats depuis les items, effets on-hit, dots |
 | `shop.js` | boutique à onglets (The Silent Trader), fusion composants → objets |
@@ -41,7 +42,7 @@ Le jeu vit dans `js/*.js`, des scripts classiques (pas de modules) chargés **da
 ## Règles projet (héritées du handoff — toujours valides)
 
 - Zéro dépendance : pas de framework, pas de build step, pas de npm package, pas d'asset externe (image, police, fichier audio).
-- Tout l'art est vectoriel procédural pré-rendu via `mkS()` ; tout nouveau sprite passe par `outlined()` (look cel-outline). Tout le son est synthétisé dans `sfx()`.
+- Tout l'art est vectoriel procédural pré-rendu via `mkS()` ; tout nouveau sprite passe par `outlined()` (look cel-outline). Registre visuel = **pulp héroïque** (Frazetta / Savage Sword) : ombre dure d'un côté, rim light de l'autre, muscles/contours en `groove()`, dégradés durs via `lg()`. Tout le son est synthétisé dans `sfx()`.
 - Tailles, vitesses et rayons en unités `TILE`, jamais en pixels codés en dur.
 - Chaque passe de rendu commence par `resetT(ctx)` (DPR-aware), jamais `setTransform` brut.
 - Tout changement doit marcher dans les 4 modes : desktop solo, desktop 2 joueurs, phone auto-aim, phone twin-stick. Tout nouvel élément interactif a un chemin clavier ET une hitbox touch (`touch.btns` dans `drawTouchUI`, ou `touch.panelRows` pour les panneaux).
