@@ -2,7 +2,7 @@
 
 A room-based prehistoric roguelike inspired by The Binding of Isaac. Farm materials, craft your build, fight the Tower guardians. Runs in any browser — desktop or phone, no install.
 
-**Play it:** open `index.html` in a browser, or via GitHub Pages at https://seederoflife.github.io/Cave-man/ to play on your phone from a link.
+**Play it:** https://cave-man-project-game-2d.vercel.app/ (auto-deployed from `main` by Vercel), or open `index.html` locally in any browser.
 
 ## Controls
 
