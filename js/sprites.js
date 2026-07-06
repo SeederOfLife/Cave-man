@@ -70,7 +70,7 @@ function drawHunter(g,s,skin,skinD,hair,tunic,tunicD){
   ell(g,s*.3,s*.6,s*.045,s*.05,skinD);        // left fist
   rim(g,s*.3,s*.5,s*.075,2.4,3.9);            // rim on left arm
   // ---- head, turned right, strong jaw ----
-  g.fillStyle=rg(g,s*.52,s*.28,s*.16,skHi,skinD);
+  g.fillStyle=rg(g,s*.52,s*.28,s*.16,'#f6dcb4',skinD);
   g.beginPath();g.moveTo(s*.4,s*.24);g.quadraticCurveTo(s*.42,s*.12,s*.54,s*.12);
   g.quadraticCurveTo(s*.66,s*.13,s*.66,s*.26);g.quadraticCurveTo(s*.66,s*.38,s*.54,s*.4);
   g.quadraticCurveTo(s*.44,s*.39,s*.4,s*.24);g.closePath();g.fill();

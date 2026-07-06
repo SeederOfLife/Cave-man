@@ -18,11 +18,18 @@ const files = [...html.matchAll(/<script src="(js\/[^"]+)"><\/script>/g)].map(m 
 if (files.length < 2) { console.error('FAIL: index.html ne liste pas les scripts js/'); process.exit(1); }
 
 // --- stubs DOM/canvas ---
+// stub that mimics the real canvas's throwing behavior so sprite bugs surface:
+// - addColorStop rejects non-string colors (a gradient passed as a color stop)
+// - createRadialGradient rejects negative radii (IndexSizeError)
+// - drawImage rejects an undefined/null image (missing SPR key)
 function makeCtx() {
+  const grad = { addColorStop(_o, c) { if (typeof c !== 'string') throw new TypeError('addColorStop: color must be a string, got ' + typeof c); } };
   return new Proxy({ filter: 'none', globalAlpha: 1, textAlign: 'left' }, {
     get(t, p) {
       if (p in t) return t[p];
-      if (p === 'createRadialGradient' || p === 'createLinearGradient') return () => ({ addColorStop() {} });
+      if (p === 'createLinearGradient') return () => grad;
+      if (p === 'createRadialGradient') return (x0, y0, r0, x1, y1, r1) => { if (r0 < 0 || r1 < 0) throw new RangeError('createRadialGradient: negative radius'); return grad; };
+      if (p === 'drawImage') return img => { if (img == null) throw new TypeError('drawImage: image is ' + img); };
       return (t[p] = () => {});
     },
     set(t, p, v) { t[p] = v; return true; },
@@ -73,6 +80,9 @@ function assert(cond, name) {
 T.start(1);
 assert(T.game && T.game.players.length === 1 && T.game.depth === 1, 'start(1) : partie créée, 1 joueur, cave 1');
 assert(T.game.cur && T.game.cur.type === 'start' && T.game.cur.obst, 'room de départ construite');
+// render de la salle de départ : exerce le héros (SPR.caveman) et le Silent Trader
+T.render();
+assert(true, 'render() de la salle de départ sans crash (héros + trader)');
 
 // 2. boucle + mouvement
 const x0 = T.game.players[0].x;
