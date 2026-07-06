@@ -13,31 +13,11 @@ function dropLoot(room,e){
   else if(e.type==='slither'){if(ch<.4)mat='obsidian';else if(ch<.85)mat='fang';}
   if(mat)room.drops.push({x:e.x,y:e.y,mat,t:0});
 }
-function craft(i){
-  const r=REC[i];if(!r)return;
-  if(game.crafted[r.id]){showMsg('ALREADY MADE.');return;}
-  if(r.kind==='active'&&game.actives.length>=2){showMsg('TWO HANDS ONLY. TOOLS FULL.');return;}
-  if(r.kind==='passive'){
-    const np=REC.filter(x=>x.kind==='passive'&&game.crafted[x.id]).length;
-    if(np>=3){showMsg('CARRY TOO MUCH. THREE CRAFTS ONLY.');return;}
-  }
-  for(const m in r.cost)if((game.mats[m]||0)<r.cost[m]){showMsg('NEED '+Object.keys(r.cost).map(k=>k.toUpperCase()).join(' + ')+'.');return;}
-  for(const m in r.cost)game.mats[m]-=r.cost[m];
-  game.crafted[r.id]=true;
-  if(r.kind==='active')game.actives.push(r.id);
-  for(const P of game.players){
-    if(r.id==='spear'){P.dmg+=1;}
-    else if(r.id==='edge'){P.dmg+=2;}
-    else if(r.id==='totem'){P.maxhp+=2;P.hp=Math.min(P.maxhp,P.hp+2);}
-    else if(r.id==='fletch'){P.cdMax=Math.max(.14,P.cdMax*.65);}
-  }
-  if(r.id==='spear')game.pierce+=1;
-  if(r.id==='atlatl')game.projMul=1.5;
-  sfx('clear');
-  showMsg(r.name+' MADE. '+r.fx);
-}
+// crafting is now the shop (shop.js); this file keeps loot, actives and pause/restart
 function relicDrop(){
-  for(const P of game.players){P.maxhp+=2;P.hp=P.maxhp;}
+  for(const P of game.players){P.bonushp+=2;}
+  recalcStats();
+  for(const P of game.players)P.hp=P.maxhp;
   game.hunger=100;
   game.mats.obsidian+=2;
   const m=MATS[Math.random()*MATS.length|0];game.mats[m]+=2;
@@ -75,6 +55,13 @@ function useActive(slot,P){
     game.acd.ember=ACD_MAX.ember;
     game.stones.push({x:P.x,y:P.y,vx:Math.cos(a)*TILE*9,vy:Math.sin(a)*TILE*9,life:.9,dmg:2,pierce:0,ember:true});
     sfx('throw');
+  } else if(id==='shield'){
+    game.acd.shield=ACD_MAX.shield;game.shieldT=2;
+    sfx('rock');burst(P.x,P.y,'#8ad0e2',14,TILE*2);
+    showMsg('STONE SKIN. TWO BREATHS.');
+  } else if(id==='decoy'){
+    game.acd.decoy=ACD_MAX.decoy;game.decoy={x:P.x,y:P.y,t:3};
+    sfx('grok');burst(P.x,P.y,'#cfc2a8',10,TILE*1.6);
   } else if(id==='fist'){
     game.acd.fist=ACD_MAX.fist;
     sfx('slam');shake=Math.min(shake+9,12);
@@ -110,8 +97,12 @@ function emberBlast(s,room){
   }
 }
 function onEnemyDeath(room,e){
+  if(e._died)return;e._died=true;
   game.kills++;
   dropLoot(room,e);
+  gainXp(Math.max(2,e.maxhp)+(e.boss?20:0));
+  gainUlt(e.boss?40:8);
+  if(game.stats.lifemeat)game.hunger=Math.min(100,game.hunger+game.stats.lifemeat);
   burst(e.x,e.y,'#d0392b',e.boss?34:18,TILE*(e.boss?5:3.6));
   floatText(e.x,e.y-e.r-14,e.boss?'DOOM!':POW_WORDS[Math.random()*POW_WORDS.length|0],'#ff8c2e',true);
   if(e.boss){sfx('boss');shake=12;relicDrop();}

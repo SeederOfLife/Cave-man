@@ -7,18 +7,23 @@ let mouse={x:0,y:0,down:false};
 window.addEventListener('keydown',e=>{keys[e.code]=true;
   if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();
   if(e.code==='KeyR'&&game&&game.dead)start(game.twoP?2:1);
-  if(e.code==='KeyC'&&game&&!game.dead&&!game.trans&&!game.paused)game.craftOpen=!game.craftOpen;
+  if(e.code==='KeyC'&&game&&!game.dead&&!game.trans&&!game.paused&&!game.lvlOpen)game.craftOpen=!game.craftOpen;
+  if(e.code==='KeyT'&&game&&!game.dead&&game.pendingPts>0&&!game.craftOpen)game.lvlOpen=true;
+  if(e.code==='Tab'&&game&&game.craftOpen){e.preventDefault();shopTab=(shopTab+1)%SHOP_TABS.length;}
   if((e.code==='Escape'||e.code==='KeyP')&&game&&!game.dead){
-    if(game.craftOpen)game.craftOpen=false;
+    if(game.lvlOpen)game.lvlOpen=false;
+    else if(game.craftOpen)game.craftOpen=false;
     else setPause(!game.paused);
   }
-  if(game&&game.craftOpen&&/^Digit[0-9]$/.test(e.code))craft(e.code==='Digit0'?9:parseInt(e.code[5])-1);
+  if(game&&game.lvlOpen&&/^Digit[1-4]$/.test(e.code)){chooseSkill(parseInt(e.code[5])-1);return;}
+  if(game&&game.craftOpen&&/^Digit[0-9]$/.test(e.code))shopKey(e.code==='Digit0'?9:parseInt(e.code[5])-1);
 });
 window.addEventListener('keyup',e=>{keys[e.code]=false;});
 cvs.addEventListener('mousemove',e=>{const r=cvs.getBoundingClientRect();mouse.x=e.clientX-r.left;mouse.y=e.clientY-r.top;});
 cvs.addEventListener('mousedown',e=>{
   mouse.down=true;
-  if(game&&game.craftOpen)craftPanelTap(e.clientX,e.clientY);
+  if(game&&game.lvlOpen)levelPanelTap(e.clientX,e.clientY);
+  else if(game&&game.craftOpen)shopTap(e.clientX,e.clientY);
 });
 window.addEventListener('mouseup',()=>{mouse.down=false;});
 window.addEventListener('contextmenu',e=>e.preventDefault());
@@ -42,16 +47,17 @@ cvs.addEventListener('touchstart',e=>{
   if(!game||game.dead)return;
   for(const t of e.changedTouches){
     const p=touchXY(t);
-    if(game.craftOpen){
-      // tap craft rows / close btn
-      craftPanelTap(t.clientX,t.clientY);
-      continue;
-    }
+    if(game.lvlOpen){levelPanelTap(t.clientX,t.clientY);continue;}
+    if(game.craftOpen){shopTap(t.clientX,t.clientY);continue;}
     const b=hitBtn(p.x,p.y);
     if(b){
       if(b==='throw'){touch.firing=true;touch.btns.throw.tid=t.identifier;}
       else if(b==='tool0')useActive(0,game.players[0]);
       else if(b==='tool1')useActive(1,game.players[0]);
+      else if(b==='skill0')castSkill(0,game.players[0]);
+      else if(b==='skill1')castSkill(1,game.players[0]);
+      else if(b==='skill2')castSkill(2,game.players[0]);
+      else if(b==='ult')castSkill(3,game.players[0]);
       else if(b==='craft')game.craftOpen=true;
       else if(b==='pause')setPause(true);
       continue;

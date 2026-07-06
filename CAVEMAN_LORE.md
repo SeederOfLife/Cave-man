@@ -39,18 +39,22 @@ The cave gives nothing freely, but everything can be taken. This is the farm loo
 - **Boar of the roots** — stands still, snorts, then CHARGES. Sidestep the lunge, punish the recovery. (Caves 2+.)
 - **Slither-man** — the drowned builders' children. Holds its ground, spits like a dino, endures like a bear, and drops the black glass it was buried with. (Caves 4+, and beside the Slither-Priest in the Tower.)
 
-## Knapping & Hafting (press C)
+## The Silent Trader (press C)
 
-Six hand-made crafts, each a combination of two materials — one hard thing, one binding thing, the way it was actually done:
+Nobody knows what it is. A shadow in every start-room wall that takes materials and leaves worked things. It never speaks — Urm approves — and it offers **the same wares to every hunter**, which is why the tribes trust it more than each other.
 
-1. **FLINT SPEAR** — flint + wood. *Knapped edge, hafted with sinew. It drinks deep.* → +1 damage, stones pierce through enemies.
-2. **ATLATL** — wood + sinew. *The arm-lengthener. Secret of the old hunters.* → stones fly far and fast. (The real atlatl extended the thrower's arm to hurl darts farther and faster than any bare hand.)
-3. **BOLA** — bone + sinew. *Two stones, one cord. The legs stop first.* → press Q to snare and slow beasts.
-4. **OBSIDIAN EDGE** — obsidian + flint. *Black glass from the deep. It remembers being fire.* → +2 damage.
-5. **BONE TOTEM** — bone + fang. *Urm says nothing. The totem hums anyway.* → +1 heart.
-6. **FEATHER FLETCH** — feather + wood. *Bat-feather guides the stone's dreaming.* → throw much faster.
-7. **HUNTER SLING** — sinew + flint. *One cord, two stones. Urm counts neither.* → every throw hurls two stones in a spread.
-8. **EMBER OF URM** (tool) — wood + flint + feather. *Fire remembered. The dark remembers too.* → hurls a burning ember that bursts in a small fire blast and lights the dark as it flies.
+Its stock: **8 raw parts** (Sharp Flint, True Haft, Killer Fang, Thick Hide, Bone Ward, Night Glass, Swift Plume, Hunter Cord) that combine two-by-two into **60 finished works** across four ways of the hunt — **FURY** (20: the stone hits harder), **SPIRIT** (17: the stone carries fire, venom, dread and the skills grow), **HIDE** (16: the hunter endures), **WIND** (7: the hunter is elsewhere) — plus **6 TOOLS** with a use of their own (bola, dart, fist, ember, shield stone, bone decoy). A hunter carries **six things, no more**. Choose like a hunter.
+
+## The Old Ways (skills)
+
+Every hunter of the tribes is born knowing three motions and one promise:
+
+- **STONE VOLLEY** (Q) — the fan-throw, taught before walking.
+- **URM'S STEP** (E) — the dash the mountain lends; danger passes through where you were.
+- **WAR HOWL** (R) — the sound that made the old world kneel; slows and hurts all nearby.
+- **WRATH OF THE MOUNTAIN** (F) — the promise. It charges on blood dealt, and when it is full, the mountain strikes every beast in the room.
+
+Kills feed the tribe's wisdom (XP). Each level, the tribe deepens **one** of the four ways (max 5). This is the loadout system the MOBA phase was waiting for.
 
 ## The Rooms
 

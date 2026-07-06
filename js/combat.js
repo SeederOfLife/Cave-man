@@ -46,7 +46,7 @@ function updateBoss(e,T,dt,room){
     sfx('boss');shake=7;
   }
   for(const p of alivePlayers()){
-    if(Math.hypot(p.x-e.x,p.y-e.y)<e.r+p.r-2)hurtPlayer(p,e.dmg,e.name);
+    if(Math.hypot(p.x-e.x,p.y-e.y)<e.r+p.r-2)hurtPlayer(p,e.dmg,e.name,e);
   }
 }
 
@@ -89,13 +89,28 @@ function updateTrans(dt){
 }
 
 // ---------- damage ----------
-function hurtPlayer(P,dmg,from){
+function hurtPlayer(P,dmg,from,src){
   if(P.hurtCd>0||P.down)return;
+  if(game.shieldT>0){P.hurtCd=.3;floatText(P.x,P.y-TILE*.6,'STONE SKIN','#8ad0e2');return;}
+  if(game.stats.blockcd&&game.blockT<=0){
+    game.blockT=game.stats.blockcd;P.hurtCd=.5;
+    sfx('rock');floatText(P.x,P.y-TILE*.6,'BLOCKED','#ffd93b');return;
+  }
+  if(src&&!src.boss&&game.stats.thorns){
+    src.hp-=game.stats.thorns;src.hitFlash=.1;
+    if(src.hp<=0)onEnemyDeath(game.cur,src);
+  }
   P.hurtCd=.85;P.hp-=dmg;
   sfx('hurt');shake=Math.min(shake+6,10);
   burst(P.x,P.y,'#d0392b',14,TILE*3);
   floatText(P.x,P.y-TILE*.6,'-'+dmg,'#ff5a4e');
   if(P.hp<=0){
+    if(game.stats.revive&&!game.reviveUsed){
+      game.reviveUsed=true;P.hp=2;P.hurtCd=1.5;
+      burst(P.x,P.y,'#8ac24a',24,TILE*3);sfx('grok');
+      floatText(P.x,P.y-TILE,'THE ANCESTORS REFUSE','#8ac24a');
+      return;
+    }
     P.hp=0;P.down=true;
     burst(P.x,P.y,'#cfc2a8',20,TILE*3);
     if(alivePlayers().length===0)die(from);

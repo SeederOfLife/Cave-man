@@ -3,11 +3,12 @@
 // Load order matters: see index.html. Plain script scope, no modules.
 // ---------- game start ----------
 function mkPlayer(id){
-  return{id,x:8.5*TILE,y:5.5*TILE,hp:6,maxhp:6,r:TILE*.27,
+  return{id,x:8.5*TILE,y:5.5*TILE,hp:6,maxhp:6,bonushp:0,r:TILE*.27,
     cd:0,cdMax:.38,dmg:1,hurtCd:0,face:1,walk:0,down:false,fdx:1,fdy:0};
 }
 function start(np){
   computeLayout(false);
+  const acd={};for(const k in ACD_MAX)acd[k]=0;
   game={
     twoP:np===2,mode:'cave',depth:1,towerTier:0,kills:0,dead:false,
     players:[],hunger:100,starveT:0,
@@ -15,20 +16,24 @@ function start(np){
     stones:[],spits:[],bolas:[],parts:[],floats:[],
     trans:null,time:0,clearFlash:0,
     mats:{flint:0,wood:0,bone:0,sinew:0,feather:0,fang:0,obsidian:0},
-    crafted:{},actives:[],acd:{bola:0,dart:0,fist:0,ember:0},
+    items:[],stats:{},actives:[],acd,
+    skillLv:{volley:1,step:1,howl:1,wrath:1},scd:{volley:0,step:0,howl:0},
+    xp:0,level:1,pendingPts:0,ultCharge:0,lvlOpen:false,
+    blockT:0,shieldT:0,decoy:null,reviveUsed:false,regenT:0,
     pierce:0,projMul:1,craftOpen:false,
   };
   game.players.push(mkPlayer(0));
   if(game.twoP)game.players.push(mkPlayer(1));
+  recalcStats();
   newCaveFloor();
   document.getElementById('overlay').classList.add('hidden');
   document.getElementById('death').classList.add('hidden');
   document.getElementById('pause').classList.add('hidden');
   document.getElementById('controls').textContent=IS_TOUCH?
-    'LEFT THUMB: MOVE · '+(aimMode==='twin'?'RIGHT THUMB: AIM & FIRE':'HOLD ⦿ TO THROW (AUTO-AIM)')+' · TAP TOOLS & CRAFT':
+    'LEFT THUMB: MOVE · '+(aimMode==='twin'?'RIGHT THUMB: AIM & FIRE':'HOLD ⦿ TO THROW (AUTO-AIM)')+' · TAP SKILLS, TOOLS & SHOP':
     (game.twoP?
-    'P1: WASD·MOUSE·SPACE·Q/E   P2: ARROWS·ENTER·RSHIFT/RCTRL   [C] CRAFT · SHARED POUCH':
-    'WASD MOVE · MOUSE AIM · CLICK/SPACE THROW · Q/E TOOLS · [C] CRAFT · BREAK ROCKS FOR LOOT');
+    'P1: WASD·MOUSE·SPACE · Q/E/R+F SKILLS · 1/2 TOOLS   P2: ARROWS·ENTER · RSHIFT/RCTRL//·. SKILLS   [C] SHOP':
+    'WASD MOVE · MOUSE AIM · SPACE THROW · Q/E/R SKILLS · F WRATH · 1/2 TOOLS · [C] SHOP · [T] LEVEL UP');
 }
 function placePlayers(x,y){
   game.players.forEach((p,i)=>{
@@ -109,7 +114,9 @@ function keepInRoom(o){
 function alivePlayers(){return game.players.filter(p=>!p.down);}
 function nearestPlayer(x,y){
   let best=null,bd=1e9;
-  for(const p of alivePlayers()){
+  const cands=alivePlayers();
+  if(game.decoy)cands.push({x:game.decoy.x,y:game.decoy.y,decoy:true});
+  for(const p of cands){
     const d=Math.hypot(p.x-x,p.y-y);
     if(d<bd){bd=d;best=p;}
   }

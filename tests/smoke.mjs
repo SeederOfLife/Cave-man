@@ -57,7 +57,8 @@ Object.defineProperty(sandbox.window, 'innerHeight', { value: 600 });
 vm.createContext(sandbox);
 
 const src = files.map(f => readFileSync(join(ROOT, f), 'utf8')).join('\n')
-  + `\n;globalThis.__T = { start, update, render, craft, keepInRoom, newTowerFloor, checkClear, newEnemy, REC, keys,
+  + `\n;globalThis.__T = { start, update, render, keepInRoom, newTowerFloor, checkClear, newEnemy, keys,
+       shopBuy, castSkill, chooseSkill, gainXp, recalcStats, ITEM_BY_ID, COMPS, SHOP_TABS, SKILLS,
        get game() { return game }, get TILE() { return TILE } };`;
 vm.runInContext(src, sandbox, { filename: 'game-concat.js' });
 const T = sandbox.__T;
@@ -83,12 +84,36 @@ assert(T.game.hunger < 100, 'la faim draine');
 for (let i = 0; i < 600; i++) T.update(1 / 60);
 assert(true, '10 s de update sans crash');
 
-// 3. limites de craft (2 tools / 3 passifs)
+// 3. shop : composants → fusion en objet fini, stats appliquées, cap 6 slots
 for (const m in T.game.mats) T.game.mats[m] = 99;
-T.REC.forEach((r, i) => T.craft(i));
-const nPassive = T.REC.filter(r => r.kind === 'passive' && T.game.crafted[r.id]).length;
-assert(nPassive === 3, `3 crafts passifs max (obtenu : ${nPassive})`);
-assert(T.game.actives.length === 2, `2 tools actifs max (obtenu : ${T.game.actives.length})`);
+T.shopBuy(T.ITEM_BY_ID.flint2); T.shopBuy(T.ITEM_BY_ID.haft);
+assert(T.game.items.length === 2, 'deux composants achetés');
+T.shopBuy(T.ITEM_BY_ID.p01); // SPEAR OF FIRST BLOOD = flint2 + haft
+assert(T.game.items.length === 1 && T.game.items[0] === 'p01', 'les composants fusionnent en objet fini');
+assert(T.game.players[0].dmg >= 3, `+dmg appliqué (dmg=${T.game.players[0].dmg})`);
+for (const c of ['hide','hide','bone2','bone2','glass','plume']) T.shopBuy(T.ITEM_BY_ID[c]);
+assert(T.game.items.length === 6, 'pouch plein à 6');
+const before6 = T.game.items.length;
+T.shopBuy(T.ITEM_BY_ID.cord);
+assert(T.game.items.length === before6, 'cap 6 slots respecté');
+T.shopBuy(T.ITEM_BY_ID.bola); // bola = cord+bone2 → cord manquant : refusé
+assert(!T.game.items.includes('bola'), 'objet refusé sans ses composants');
+
+// 3bis. skills : cast + XP + level-up choisi
+T.game.scd.volley = 0;
+const nStones = T.game.stones.length;
+T.castSkill(0, T.game.players[0]);
+assert(T.game.stones.length > nStones, 'STONE VOLLEY lance des pierres');
+const lvl0 = T.game.level;
+T.gainXp(1000);
+assert(T.game.level > lvl0 && T.game.pendingPts > 0, 'XP → level-up + points en attente');
+const lvVolley = T.game.skillLv.volley;
+T.chooseSkill(0);
+assert(T.game.skillLv.volley === lvVolley + 1, 'choix du skill au level-up');
+T.game.ultCharge = 100;
+T.game.lvlOpen = false;
+T.castSkill(3, T.game.players[0]);
+assert(T.game.ultCharge === 0, "l'ult consomme sa charge");
 
 // 4. containment
 const e = { x: -9999, y: -9999, r: T.TILE * 0.3, fly: false };

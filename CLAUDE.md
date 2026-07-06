@@ -18,18 +18,23 @@ Le jeu vit dans `js/*.js`, des scripts classiques (pas de modules) chargés **da
 |---|---|
 | `core.js` | canvas & DPR, sfx |
 | `sprites.js` / `sprites-defs.js` | helpers de dessin / dictionnaire SPR + passe outline |
-| `data.js` | constantes (salles, recettes, lore), settings |
+| `data.js` | constantes (salles, lore), settings |
+| `items-data.js` / `items-data2.js` | catalogue du shop : 8 composants, 20 FURY / 17 SPIRIT / 16 HIDE / 7 WIND / 6 TOOLS |
 | `input.js` | clavier/souris, touch |
 | `world.js` | layout, utils, génération d'étage, contenu des salles |
 | `state.js` | start de partie, solidité, fx |
 | `sprites-beasts.js` | sprites des bêtes ajoutées (spider, boar, slither-man) |
-| `craft.js` | loot, craft, actives, pause/restart |
+| `craft.js` | loot, actives (tools), pause/restart |
+| `stats.js` | recalcul des stats depuis les items, effets on-hit, dots |
+| `shop.js` | boutique à onglets (The Silent Trader), fusion composants → objets |
+| `skills.js` | 3 skills + ult à charge, XP, level-up |
 | `update.js` | boucle principale, update(dt) |
 | `combat.js` | IA boss, transitions, dégâts |
 | `enemies.js` | IA des bêtes non-boss (chase, flee, spit, lunge, zigzag) |
 | `render-room.js` / `render-fx.js` | rendu salle / helpers de dessin + lighting |
 | `comic.js` | passe print comic : points Ben-Day, speed lines, POW bursts |
 | `hud.js` | HUD, touch UI |
+| `hud-skills.js` | barre de skills, jauge d'ult, XP, 6 slots d'items |
 | `panels.js` | panneau de craft, minimap |
 | `boot.js` | amorçage, toujours en dernier |
 
@@ -44,7 +49,8 @@ Le jeu vit dans `js/*.js`, des scripts classiques (pas de modules) chargés **da
 
 ## Invariants gameplay
 
-- Limites de craft = design cœur : max 2 tools actifs et 3 crafts passifs par run (« choose like a hunter »).
+- Le shop (The Silent Trader, touche C) est **identique pour tous les joueurs**. Les composants (8, partagés entre tous les arbres) fusionnent en objets finis. **Max 6 objets portés** (composants inclus). Les matériaux sont la monnaie.
+- Skills innés : 3 à petit cooldown (Q/E/R) + une ult chargée par les dégâts/kills (F). Level-up (XP des kills) = choisir UN skill à améliorer (max 5). Ne pas ajouter de skill sans passer par ce système.
 - Les matériaux sont l'économie — le nouveau contenu doit la nourrir (destructibles → drops, ennemis → table dans `dropLoot`).
 - Tower floor après chaque cave de profondeur divisible par 3, toujours avec un gardien qui scelle le trou de sortie jusqu'à sa mort.
 - Co-op : un joueur down revit avec 1 cœur à la transition de salle suivante ; le run ne finit que quand tous sont down.

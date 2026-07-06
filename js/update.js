@@ -14,16 +14,18 @@ function frame(now){
 }
 requestAnimationFrame(frame);
 
-const P1KEYS={up:'KeyW',down:'KeyS',left:'KeyA',right:'KeyD',throw:'Space',a0:'KeyQ',a1:'KeyE'};
-const P2KEYS={up:'ArrowUp',down:'ArrowDown',left:'ArrowLeft',right:'ArrowRight',throw:'Enter',a0:'ShiftRight',a1:'ControlRight'};
+const P1KEYS={up:'KeyW',down:'KeyS',left:'KeyA',right:'KeyD',throw:'Space',a0:'Digit1',a1:'Digit2',s0:'KeyQ',s1:'KeyE',s2:'KeyR',ult:'KeyF'};
+const P2KEYS={up:'ArrowUp',down:'ArrowDown',left:'ArrowLeft',right:'ArrowRight',throw:'Enter',s0:'ShiftRight',s1:'ControlRight',s2:'Slash',ult:'Period'};
 
 function update(dt){
   const room=game.cur;
   if(msgTimer>0){msgTimer-=dt;if(msgTimer<=0)document.getElementById('msg').style.opacity=0;}
-  if(game.craftOpen)return;
+  if(game.craftOpen||game.lvlOpen)return;
   game.time+=dt;
   if(game.clearFlash>0)game.clearFlash-=dt;
   for(const k in game.acd)if(game.acd[k]>0)game.acd[k]-=dt;
+  for(const k in game.scd)if(game.scd[k]>0)game.scd[k]-=dt;
+  tickStats(dt);
 
   // ---- players ----
   for(const P of game.players){
@@ -39,8 +41,8 @@ function update(dt){
       const m=Math.hypot(touch.moveDx,touch.moveDy);
       if(m>8){ix=touch.moveDx/52;iy=touch.moveDy/52;}
     }
-    const inWater=cellAtPx(room,P.x,P.y)===O_WATER;
-    const spd=(inWater?TILE*2.9:TILE*5.2);
+    const inWater=cellAtPx(room,P.x,P.y)===O_WATER&&!game.stats.waterwalk;
+    const spd=(inWater?TILE*2.9:TILE*5.2)*(1+(game.stats.mv||0));
     const len=Math.hypot(ix,iy)||1;
     const nl=Math.min(1,len);
     moveCircle(room,P,ix/len*spd*nl*dt,iy/len*spd*nl*dt,false);
@@ -64,11 +66,16 @@ function update(dt){
       const a=aimOf(P);
       const sp=TILE*10.5*game.projMul;
       game.stones.push({x:P.x,y:P.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:1.2*game.projMul,dmg:P.dmg,pierce:game.pierce});
-      if(game.crafted.sling)game.stones.push({x:P.x,y:P.y,vx:Math.cos(a+.16)*sp,vy:Math.sin(a+.16)*sp,life:1.2*game.projMul,dmg:P.dmg,pierce:game.pierce});
+      P._thr=(P._thr||0)+1;
+      if(game.stats.double4&&P._thr%4===0)game.stones.push({x:P.x,y:P.y,vx:Math.cos(a+.16)*sp,vy:Math.sin(a+.16)*sp,life:1.2*game.projMul,dmg:P.dmg,pierce:game.pierce});
       sfx('throw');
     }
-    if(keys[K.a0])useActive(0,P);
-    if(keys[K.a1])useActive(1,P);
+    if(K.a0&&keys[K.a0])useActive(0,P);
+    if(K.a1&&keys[K.a1])useActive(1,P);
+    if(keys[K.s0])castSkill(0,P);
+    if(keys[K.s1])castSkill(1,P);
+    if(keys[K.s2])castSkill(2,P);
+    if(keys[K.ult])castSkill(3,P);
     const ti=P.x/TILE|0,tj=P.y/TILE|0;
     const d=isDoorTile(ti,tj);
     if(d&&room.doors[d]&&roomDoorsOpen(room)){startTrans(d);return;}
@@ -77,7 +84,7 @@ function update(dt){
 
   // ---- tribe hunger ----
   const anyWater=game.players.some(p=>!p.down&&p._inWater);
-  game.hunger=Math.max(0,game.hunger-dt*(anyWater?1.6:.8)*(game.twoP?1.25:1)*DIFF[difficulty].hunger);
+  game.hunger=Math.max(0,game.hunger-dt*(anyWater?1.6:.8)*(game.twoP?1.25:1)*DIFF[difficulty].hunger*(1-(game.stats.hungerslow||0)));
   if(game.hunger<=0){
     game.starveT+=dt;
     if(game.starveT>2.2){game.starveT=0;for(const p of alivePlayers())hurtPlayer(p,1,'STARVING');}
@@ -132,10 +139,11 @@ function update(dt){
     }
     for(const e of room.live){
       if(e.hp>0&&Math.hypot(e.x-s.x,e.y-s.y)<e.r+TILE*.12){
-        e.hp-=s.dmg;e.hitFlash=.12;
+        const dd=stoneHitMods(s,e,room);
+        e.hp-=dd;e.hitFlash=.12;
         if(!e.boss){e.vx+=s.vx*.12;e.vy+=s.vy*.12;}
         burst(s.x,s.y,s.dart?'#6a5490':'#d0392b',8,TILE*3);sfx('hit');shake=Math.min(shake+3.5,7);
-        floatText(e.x,e.y-e.r-8,'-'+s.dmg,s.dart?'#b9a6e8':'#ffd166');
+        floatText(e.x,e.y-e.r-8,'-'+dd,s.dart?'#b9a6e8':'#ffd166');
         if(e.hp<=0)onEnemyDeath(room,e);
         if(s.pierce>0){s.pierce--;}else{if(s.ember)emberBlast(s,room);game.stones.splice(i,1);}
         break;

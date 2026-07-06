@@ -6,11 +6,17 @@ A room-based prehistoric roguelike inspired by The Binding of Isaac. Farm materi
 
 ## Controls
 
-Desktop (Player 1): WASD to move, mouse to aim, click or Space to throw, Q/E for crafted tools, C to open crafting, Escape or P to pause.
+Desktop (Player 1): WASD to move, mouse to aim, click or Space to throw. Q/E/R cast skills, F unleashes the Wrath (ult, charged by blood). 1/2 use active tools. C opens the shop, T spends level-up points, Escape or P pauses.
 
-Desktop (Player 2, "Two Hunters" mode): Arrow keys to move, Enter to throw, Right-Shift and Right-Ctrl for tools.
+Desktop (Player 2, "Two Hunters" mode): Arrow keys to move, Enter to throw, Right-Shift / Right-Ctrl / Slash cast skills, Period for the Wrath.
 
-Phone: left thumb is a virtual joystick for moving. Right side depends on the aiming mode picked on the title screen — Auto-Aim gives you one big throw button (the game aims at the nearest beast), Twin-Stick gives you a second joystick that aims and fires. Tap the tool circles for your crafted tools, the flint button to craft, and the pause button top-left.
+Phone: left thumb is a virtual joystick for moving. Right side depends on the aiming mode picked on the title screen — Auto-Aim gives you one big throw button (the game aims at the nearest beast), Twin-Stick gives you a second joystick that aims and fires. The skill circles (and the bigger Wrath circle) sit above the throw zone, tool circles next to it, the flint button opens the shop, pause is top-left.
+
+## The Silent Trader & skills
+
+The shop (C) is the same for every hunter: 8 raw parts combine into 60 finished works — 20 FURY (physical damage), 17 SPIRIT (on-hit effects and skill power), 16 HIDE (defense), 7 WIND (speed) — plus 6 active TOOLS. You carry at most 6 things. Materials from the farm loop are the currency.
+
+Skills are innate: STONE VOLLEY (Q), URM'S STEP (E), WAR HOWL (R), and WRATH OF THE MOUNTAIN (F) — the ult charges from the damage you deal. Kills give XP; each level grants one point to improve the skill of your choice (max 5).
 
 ## Title screen parameters
 

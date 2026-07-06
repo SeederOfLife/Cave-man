@@ -1,0 +1,55 @@
+"use strict";
+// ---------- item catalog 1/2: components · physical (20) · magic (17) ----------
+// Every item: {id,name,from:[comp,comp],cost:{mat:n},s:{statKey:val},fx:'SHOP TEXT'}
+// Stat keys are interpreted in stats.js. Components are shared across all trees.
+const COMPS=[
+ {id:'flint2',name:'SHARP FLINT', cost:{flint:2},  s:{dmg:1},      fx:'+1 DMG'},
+ {id:'haft',  name:'TRUE HAFT',   cost:{wood:2},   s:{aspd:.1},    fx:'+10% THROW SPEED'},
+ {id:'fang2', name:'KILLER FANG', cost:{fang:2},   s:{crit:.08},   fx:'+8% CRIT'},
+ {id:'hide',  name:'THICK HIDE',  cost:{sinew:2},  s:{hp:2},       fx:'+1 HEART'},
+ {id:'bone2', name:'BONE WARD',   cost:{bone:2},   s:{regen:.5},   fx:'SLOW HEALING'},
+ {id:'glass', name:'NIGHT GLASS', cost:{obsidian:1},s:{spirit:1},  fx:'+1 SKILL DMG'},
+ {id:'plume', name:'SWIFT PLUME', cost:{feather:2},s:{mv:.05},     fx:'+5% SPEED'},
+ {id:'cord',  name:'HUNTER CORD', cost:{sinew:1,wood:1},s:{projspd:.1},fx:'+10% STONE FLIGHT'},
+];
+const ITEMS_PHYS=[
+ {id:'p01',name:'SPEAR OF FIRST BLOOD',from:['flint2','haft'], cost:{flint:1},   s:{dmg:2,aspd:.1},      fx:'+2 DMG · +10% THROW SPEED'},
+ {id:'p02',name:'TWIN FANG',           from:['fang2','fang2'], cost:{fang:1},    s:{crit:.25},           fx:'+25% CRIT (DOUBLE DMG)'},
+ {id:'p03',name:'LONG ARM',            from:['haft','cord'],   cost:{wood:1},    s:{projspd:.35,aspd:.1},fx:'STONES FLY FAR & FAST'},
+ {id:'p04',name:'DEEP BITER',          from:['flint2','fang2'],cost:{flint:1},   s:{dmg:3},              fx:'+3 DMG'},
+ {id:'p05',name:'BLOOD DRINKER',       from:['fang2','hide'],  cost:{fang:1},    s:{dmg:1,lifemeat:8},   fx:'+1 DMG · KILLS FEED THE TRIBE'},
+ {id:'p06',name:'STONE STORM',         from:['haft','haft'],   cost:{wood:2},    s:{aspd:.3},            fx:'+30% THROW SPEED'},
+ {id:'p07',name:'SKULL CRACKER',       from:['flint2','bone2'],cost:{bone:1},    s:{dmg:2,knock:.5},     fx:'+2 DMG · BIG KNOCKBACK'},
+ {id:'p08',name:'HUNGRY EDGE',         from:['fang2','cord'],  cost:{sinew:1},   s:{dmg:1,aspd:.15,lifemeat:5},fx:'+1 DMG · +15% SPEED · FEEDS'},
+ {id:'p09',name:'PIERCING TRUTH',      from:['flint2','glass'],cost:{obsidian:1},s:{dmg:1,pierce:1},     fx:'+1 DMG · STONES PIERCE'},
+ {id:'p10',name:"GIANT'S KNUCKLE",     from:['bone2','hide'],  cost:{bone:1},    s:{dmg:2,hp:2},         fx:'+2 DMG · +1 HEART'},
+ {id:'p11',name:'EXECUTIONER FLINT',   from:['flint2','flint2'],cost:{flint:2},  s:{dmg:1,execute:2},    fx:'+1 DMG · +2 VS WOUNDED'},
+ {id:'p12',name:'RAPID SLINGER',       from:['haft','plume'],  cost:{feather:1}, s:{aspd:.2,mv:.05},     fx:'+20% THROW · +5% MOVE'},
+ {id:'p13',name:'SPLITTING STONE',     from:['cord','glass'],  cost:{obsidian:1},s:{dmg:1,splash:1},     fx:'+1 DMG · HITS SPLASH NEARBY'},
+ {id:'p14',name:'WAR TROPHY',          from:['fang2','bone2'], cost:{fang:1},    s:{dmg:2,crit:.1},      fx:'+2 DMG · +10% CRIT'},
+ {id:'p15',name:'RECKLESS TUSK',       from:['fang2','haft'],  cost:{fang:2},    s:{dmg:4,hp:-2},        fx:'+4 DMG · COSTS 1 HEART'},
+ {id:'p16',name:'STEADY ARM',          from:['bone2','cord'],  cost:{bone:1},    s:{dmg:1,aspd:.1,hp:2}, fx:'+1 DMG · +10% THROW · +1 HEART'},
+ {id:'p17',name:'MOUNTAIN SPIKE',      from:['flint2','hide'], cost:{flint:1},   s:{dmg:2,knock:.8},     fx:'+2 DMG · HUGE KNOCKBACK'},
+ {id:'p18',name:"SLINGER'S OATH",      from:['cord','cord'],   cost:{sinew:1},   s:{dmg:1,double4:1},    fx:'+1 DMG · EVERY 4TH THROW IS TWO'},
+ {id:'p19',name:'BEAST SLAYER',        from:['fang2','glass'], cost:{obsidian:1},s:{dmg:2,bigbonus:2},   fx:'+2 DMG · +2 VS GREAT BEASTS'},
+ {id:'p20',name:"URM'S SPLINTER",      from:['glass','flint2'],cost:{obsidian:1},s:{dmg:3,ultrate:.15},  fx:'+3 DMG · HITS CHARGE THE WRATH'},
+];
+const ITEMS_MAGIC=[
+ {id:'m01',name:'EMBER TOOTH',   from:['glass','cord'],  cost:{obsidian:1},s:{burn:1},          fx:'HITS BURN (1/S)'},
+ {id:'m02',name:'FROST MARROW',  from:['bone2','glass'], cost:{bone:1},    s:{slowhit:1},       fx:'HITS SLOW THE BEAST'},
+ {id:'m03',name:'SPARK OF THE DEEP',from:['glass','plume'],cost:{feather:1},s:{chain:1},        fx:'HITS ARC TO ANOTHER BEAST'},
+ {id:'m04',name:'VENOM GLAND',   from:['fang2','glass'], cost:{fang:1},    s:{venom:2},         fx:'HITS POISON (2 OVER TIME)'},
+ {id:'m05',name:'DREAD MASK',    from:['bone2','bone2'], cost:{bone:2},    s:{fear:1},          fx:'HITS HURL BEASTS BACK'},
+ {id:'m06',name:'SPIRIT STONE',  from:['glass','glass'], cost:{obsidian:2},s:{spirit:2},        fx:'+2 SKILL DMG'},
+ {id:'m07',name:'OLD FLAME',     from:['glass','haft'],  cost:{wood:1},    s:{burn:2},          fx:'HITS BURN HOT (2/S)'},
+ {id:'m08',name:"HUNTER'S MARK", from:['cord','plume'],  cost:{feather:1}, s:{mark:2},          fx:'MARKED BEASTS TAKE +1 FROM ALL'},
+ {id:'m09',name:'DEEP CALLER',   from:['glass','bone2'], cost:{obsidian:1},s:{ultrate:.25},     fx:'WRATH CHARGES MUCH FASTER'},
+ {id:'m10',name:'ECHO CHARM',    from:['cord','bone2'],  cost:{bone:1},    s:{cdr:.15},         fx:'SKILLS COOL 15% FASTER'},
+ {id:'m11',name:'WITCH ROOT',    from:['haft','glass'],  cost:{wood:1},    s:{spirit:1,slowhit:.6},fx:'+1 SKILL DMG · HITS SLOW'},
+ {id:'m12',name:'SOUL MEAT',     from:['hide','glass'],  cost:{sinew:1},   s:{spirit:1,skillheal:1},fx:'+1 SKILL DMG · SKILLS HEAL 1'},
+ {id:'m13',name:'STORM CALLER',  from:['plume','glass'], cost:{feather:2}, s:{chain:2},         fx:'HITS ARC HARD (2 DMG)'},
+ {id:'m14',name:'NIGHT TERROR',  from:['bone2','fang2'], cost:{fang:1},    s:{fear:1,dmg:1},    fx:'+1 DMG · HITS HURL BEASTS BACK'},
+ {id:'m15',name:'COLD GRIP',     from:['hide','bone2'],  cost:{sinew:1},   s:{chill:1},         fx:'NEARBY BEASTS MOVE SLOWER'},
+ {id:'m16',name:'COILED TONGUE', from:['fang2','cord'],  cost:{fang:1},    s:{venom:2,mark:1},  fx:'HITS POISON AND MARK'},
+ {id:'m17',name:'STARFALL SHARD',from:['glass','flint2'],cost:{obsidian:1},s:{spirit:1,crit:.15},fx:'+1 SKILL DMG · +15% CRIT'},
+];

@@ -24,8 +24,9 @@ function render(){
   renderLight();
   drawHUD();
   drawMinimap();
-  if(IS_TOUCH&&!game.craftOpen)drawTouchUI();
-  drawCraftPanel();
+  if(IS_TOUCH&&!game.craftOpen&&!game.lvlOpen)drawTouchUI();
+  drawShop();
+  drawLevelPanel();
   drawComicPrint();
 }
 
@@ -207,6 +208,12 @@ function renderRoom(room,ox,oy,active){
       ctx.save();ctx.translate(b.x,b.y);ctx.rotate(b.rot);
       ctx.drawImage(SPR.bola,-TILE*.22,-TILE*.22,TILE*.44,TILE*.44);
       ctx.restore();
+    }
+    if(game.decoy){
+      const D=game.decoy;
+      ctx.globalAlpha=.5+Math.sin(game.time*6)*.2;
+      ctx.drawImage(SPR.bone,D.x-TILE*.4,D.y-TILE*.4,TILE*.8,TILE*.8);
+      ctx.globalAlpha=1;
     }
     for(const e of game.cur.live){
       if(e.boss&&e.state==='charge')drawSpeedLines(e.x,e.y,e.cdx,e.cdy);

@@ -5,6 +5,8 @@ function updateEnemies(room,dt){
   for(const e of room.live){
     e.t+=dt;if(e.hitFlash>0)e.hitFlash-=dt;if(e.spitCd>0)e.spitCd-=dt;
     if(e.slow>0)e.slow-=dt;
+    tickDots(e,room,dt);
+    if(e.hp<=0)continue;
     const T=nearestPlayer(e.x,e.y);
     if(!T)break;
     if(e.boss){updateBoss(e,T,dt,room);continue;}
@@ -35,7 +37,8 @@ function updateEnemies(room,dt){
     moveCircle(room,e,e.vx*dt,e.vy*dt,e.fly);
     keepInRoom(e);
     for(const p of alivePlayers()){
-      if(Math.hypot(p.x-e.x,p.y-e.y)<e.r+p.r-2)hurtPlayer(p,e.dmg,e.type==='slither'?'A SLITHER-MAN':e.type.toUpperCase());
+      if(Math.hypot(p.x-e.x,p.y-e.y)<e.r+p.r-2)hurtPlayer(p,e.dmg,e.type==='slither'?'A SLITHER-MAN':e.type.toUpperCase(),e);
     }
   }
+  room.live=room.live.filter(e=>e.hp>0);
 }

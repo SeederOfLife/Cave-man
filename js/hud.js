@@ -53,26 +53,20 @@ function drawHUD(){
     ctx.globalAlpha=1;
     mx+=40;
   }
-  // crafted passive tags
-  let cxp=16;
-  for(const r of REC){
-    if(r.kind!=='passive'||!game.crafted[r.id])continue;
-    ctx.fillStyle='rgba(193,100,42,.3)';roundRect(ctx,cxp-3,HUDH+2,34,15,6);ctx.fill();
-    ctx.fillStyle='#d98443';ctx.font='bold 9px Trebuchet MS';
-    ctx.fillText(r.name.split(' ')[0].slice(0,5),cxp,HUDH+13);
-    cxp+=40;
-  }
-  // desktop tool slots
+  drawXpBar();
+  drawItemSlots();
+  // desktop tool slots (active items on 1/2) + skill bar
   if(!IS_TOUCH){
-    const slotIcons={bola:SPR.bola,dart:SPR.obsidian,fist:SPR.rock,ember:SPR.torch};
-    const labels=['Q','E'];
+    const slotIcons={bola:SPR.bola,dart:SPR.obsidian,fist:SPR.rock,ember:SPR.torch,shield:SPR.slab,decoy:SPR.bone};
+    const labels=['1','2'];
     for(let s2=0;s2<2;s2++){
       const bx2=VW-96+s2*48,by2=VH-46;
       drawToolSlot(bx2,by2,17,game.actives[s2],slotIcons,labels[s2]);
     }
     ctx.fillStyle='#8a7660';ctx.font='bold 12px Trebuchet MS';ctx.textAlign='right';
-    ctx.fillText('[C] CRAFT',VW-16,VH-70);
+    ctx.fillText('[C] SHOP',VW-16,VH-70);
     ctx.textAlign='left';
+    drawSkillBarDesktop();
   }
 }
 function drawToolSlot(x,y,r,id,icons,label){
@@ -123,8 +117,9 @@ function drawTouchUI(){
     ctx.drawImage(SPR.stone,tx-18,ty-18,36,36);
     ctx.globalAlpha=1;
   }
-  // tool buttons
-  const slotIcons={bola:SPR.bola,dart:SPR.obsidian,fist:SPR.rock,ember:SPR.torch};
+  drawTouchSkills();
+  // tool buttons (active items)
+  const slotIcons={bola:SPR.bola,dart:SPR.obsidian,fist:SPR.rock,ember:SPR.torch,shield:SPR.slab,decoy:SPR.bone};
   const t0x=aimMode==='twin'?VW-56:VW-140,t0y=aimMode==='twin'?VH-190:VH-70;
   const t1x=aimMode==='twin'?VW-116:VW-160,t1y=aimMode==='twin'?VH-170:VH-134;
   touch.btns.tool0={x:t0x,y:t0y,r:24};
@@ -150,6 +145,6 @@ function drawTouchUI(){
   ctx.strokeStyle='#c1642a';ctx.lineWidth=2;ctx.stroke();
   ctx.drawImage(SPR.flint,cx2-13,cy2-13,26,26);
   ctx.fillStyle='#c1642a';ctx.font='bold 8px Trebuchet MS';ctx.textAlign='center';
-  ctx.fillText('CRAFT',cx2,cy2+32);ctx.textAlign='left';
+  ctx.fillText('SHOP',cx2,cy2+32);ctx.textAlign='left';
   ctx.globalAlpha=1;
 }
