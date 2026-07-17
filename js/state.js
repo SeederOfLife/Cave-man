@@ -47,13 +47,13 @@ function revivePlayers(){
 }
 function newCaveFloor(){
   game.mode='cave';
-  game.rooms=genFloor(game.depth);
+  game.rooms=genFloor();
   game.cur=game.rooms[key(0,0)];
-  buildRoom(game.cur,game.depth);
+  buildRoom(game.cur,game.cur.tier);
   placePlayers(8.5*TILE,5.5*TILE);
   revivePlayers();
   game.stones.length=0;game.spits.length=0;game.bolas.length=0;
-  showMsg(DEPTH_LORE[Math.min(game.depth-1,DEPTH_LORE.length-1)]+'  ·  PUSH NORTH — FARM THE LANES & JUNGLE, FELL THE GUARDIAN'+(game.depth>1?'  ·  DEPTH '+game.depth:''));
+  showMsg('THE FIRST TOWER OPENS  ·  FARM THE LANES & JUNGLE, PUSH NORTH, FELL THE GUARDIAN');
 }
 function newTowerFloor(){
   game.mode='tower';

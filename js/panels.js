@@ -39,6 +39,7 @@ function drawMinimap(){
     else if(r.type==='treasure')icon='#b9c6cf';
     else if(r.type==='grok')icon='#8ac24a';
     else if(r.type==='shrine')icon='#c1642a';
+    else if(r.type==='brush')icon='#3f5a2c';       // jungle hide
     if(icon){ctx.fillStyle=icon;ctx.beginPath();ctx.arc(x+cw/2,y+ch/2,r.type==='exit'?3:2,0,7);ctx.fill();}
   }
 }

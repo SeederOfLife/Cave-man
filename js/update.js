@@ -236,22 +236,7 @@ function update(dt){
     }
   }
 
-  // ---- exit hole ----
-  if((room.type==='exit'||room.type==='tower')&&roomDoorsOpen(room)){
-    for(const p of alivePlayers()){
-      if(Math.hypot(p.x-8.5*TILE,p.y-5.5*TILE)<TILE*.55){
-        sfx('stairs');shake=6;
-        if(game.mode==='cave'&&game.depth%3===0){
-          game.towerTier=game.depth/3;
-          newTowerFloor();
-        } else {
-          game.depth++;
-          newCaveFloor();
-        }
-        return;
-      }
-    }
-  }
+  // (no dungeon descent — one persistent map; felling the guardian wins the run)
 
   // ---- particles / floats ----
   for(let i=game.parts.length-1;i>=0;i--){const p=game.parts[i];p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.9;p.vy*=.9;p.life-=dt;if(p.life<=0)game.parts.splice(i,1);}

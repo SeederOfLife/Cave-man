@@ -53,8 +53,9 @@ Le jeu vit dans `js/*.js`, des scripts classiques (pas de modules) chargés **da
 - Le shop (The Silent Trader, touche C) est **identique pour tous les joueurs**. Les composants (8, partagés entre tous les arbres) fusionnent en objets finis. **Max 6 objets portés** (composants inclus). Les matériaux sont la monnaie.
 - Skills innés : 3 à petit cooldown (Q/E/R) + une ult chargée par les dégâts/kills (F). Level-up (XP des kills) = choisir UN skill à améliorer (max 5). Ne pas ajouter de skill sans passer par ce système.
 - Les matériaux sont l'économie — le nouveau contenu doit la nourrir (destructibles → drops, ennemis → table dans `dropLoot`).
-- **Carte MOBA fixe** (`genFloor`, world.js) : base au sud `(0,0)`, objectif-gardien au nord `(0,-4)`. 3 lanes verticales — SOLO `gx=-2`, MID `gx=0`, BOT `gx=2` — avec rooms jungle entre elles (`gx=-1,1`). Même carte à chaque depth ; deeper = mobs plus durs (scaling par depth dans `newEnemy`). Ne pas re-randomiser la carte : la structure lanes/jungle est le cœur du design. Lanes = creeps à farmer (`normal`), jungle = camps plus costauds (`dino` boosté) + shrine/relic.
-- Tower floor après chaque depth divisible par 3, toujours avec un gardien qui scelle le trou de sortie jusqu'à sa mort.
+- **Carte MOBA unique et persistante** (`genFloor`, world.js) — **pas de niveaux de donjon, pas de descente**. Base au sud `(0,0)`, gardien-objectif au nord `(0,-6)`. 3 lanes verticales — SOLO `gx=-2`, MID `gx=0`, BOT `gx=2` — avec des **clusters de jungle fractals** entre elles (`gx=-1,1`) : chaque colonne alterne camps (`dino`), rooms de planque (`brush`, couvert dense pour se cacher/repositionner) et un buff (shrine / relic). Ne pas re-randomiser : la structure lanes/jungle est le cœur du design.
+- **Difficulté par position, pas par étage** : `room.tier = max(1, -gy)` (croît vers le nord). Passer `room.tier` à `buildRoom`/`spawnEnemies`/`newEnemy` — jamais `game.depth` (qui ne fait plus que suivre le tier courant pour l'ambiance/obscurité).
+- **Objectif = gardien boss** (room `exit`, `spawnEnemies` pousse `newBoss`). Le tuer déclenche `win()` — c'est la fin de run (victoire). Il n'y a plus de boss ailleurs.
 - Co-op : un joueur down revit avec 1 cœur à la transition de salle suivante ; le run ne finit que quand tous sont down.
 
 ## Vérifications obligatoires avant chaque commit

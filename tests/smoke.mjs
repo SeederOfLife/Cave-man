@@ -64,8 +64,9 @@ Object.defineProperty(sandbox.window, 'innerHeight', { value: 600 });
 vm.createContext(sandbox);
 
 const src = files.map(f => readFileSync(join(ROOT, f), 'utf8')).join('\n')
-  + `\n;globalThis.__T = { start, update, render, keepInRoom, newTowerFloor, checkClear, newEnemy, keys,
-       shopBuy, castSkill, chooseSkill, gainXp, recalcStats, ITEM_BY_ID, COMPS, SHOP_TABS, SKILLS,
+  + `\n;globalThis.__T = { start, update, render, keepInRoom, checkClear, newEnemy, keys,
+       buildRoom, spawnEnemies, onEnemyDeath, shopBuy, castSkill, chooseSkill, gainXp, recalcStats,
+       ITEM_BY_ID, COMPS, SHOP_TABS, SKILLS,
        get game() { return game }, get TILE() { return TILE } };`;
 vm.runInContext(src, sandbox, { filename: 'game-concat.js' });
 const T = sandbox.__T;
@@ -87,9 +88,9 @@ assert(true, 'render() de la salle de départ sans crash (héros + trader)');
 // 1bis. carte MOBA : base, objectif, 3 lanes, jungle, et graphe connexe
 const R = T.game.rooms;
 assert(R['0,0'] && R['0,0'].type === 'start', 'base au sud (0,0)');
-assert(R['0,-4'] && R['0,-4'].type === 'exit', 'objectif/gardien au nord (0,-4)');
+assert(R['0,-6'] && R['0,-6'].type === 'exit', 'objectif/gardien au nord (0,-6)');
 assert(['-2,-1', '0,-1', '2,-1'].every(k => R[k] && R[k].type === 'normal'), '3 lanes (solo/mid/bot)');
-assert(R['-1,-2'].type === 'shrine' && R['1,-2'].type === 'treasure', 'camps de jungle (shrine + relic)');
+assert(R['-1,-3'].type === 'shrine' && R['1,-3'].type === 'treasure', 'camps de jungle (shrine + relic)');
 const DV = { n: [0, -1], s: [0, 1], w: [-1, 0], e: [1, 0] };
 const seen = new Set(['0,0']), q = ['0,0'];
 while (q.length) { const k = q.pop(), r = R[k]; for (const d in DV) if (r.doors[d]) { const nk = (r.gx + DV[d][0]) + ',' + (r.gy + DV[d][1]); if (R[nk] && !seen.has(nk)) { seen.add(nk); q.push(nk); } } }
@@ -141,17 +142,20 @@ const e = { x: -9999, y: -9999, r: T.TILE * 0.3, fly: false };
 T.keepInRoom(e);
 assert(e.x >= T.TILE && e.y >= T.TILE && e.x <= 16 * T.TILE && e.y <= 10 * T.TILE, 'keepInRoom ramène une entité éjectée');
 
-// 5. flow tower : un gardien scelle la sortie
-T.game.depth = 3;
-T.game.towerTier = 1;
-T.newTowerFloor();
-assert(T.game.mode === 'tower' && T.game.cur.live.some(b => b.boss), 'tower floor : boss présent');
-assert(!(T.game.cur.cleared || T.game.cur.live.length === 0), 'sortie scellée tant que le gardien vit');
-T.game.cur.live.length = 0;
-T.checkClear(T.game.cur);
-assert(T.game.cur.cleared, 'gardien mort → salle clear');
+// 5. jungle hide + objectif = boss gardien, dont la mort gagne la partie
+assert(R['-1,-1'].type === 'brush' && R['1,-4'].type === 'brush', 'jungle a des rooms hide (brush)');
+const obj = R['0,-6'];
+T.buildRoom(obj, obj.tier);
+T.spawnEnemies(obj, obj.tier, 's');
+assert(obj.live.some(e => e.boss), 'objectif = boss gardien');
+assert(!obj.cleared, 'salle objectif scellée tant que le gardien vit');
+T.game.cur = obj;
+T.onEnemyDeath(obj, obj.live.find(e => e.boss));
+assert(T.game.dead, 'gardien mort = victoire (fin de run)');
 
 // 6. nouveaux monstres : spawn direct + 2 s d'IA (lunge du boar, zigzag spider, spit slither)
+T.game.dead = false; T.game.lvlOpen = false;
+T.game.cur.live.length = 0;
 for (const t of ['spider', 'boar', 'slither']) T.game.cur.live.push(T.newEnemy(t, 3 * T.TILE, 3 * T.TILE, 5));
 for (let i = 0; i < 120; i++) T.update(1 / 60);
 assert(T.game.cur.live.every(e => Number.isFinite(e.x) && Number.isFinite(e.y)), 'spider/boar/slither : IA stable');
@@ -162,9 +166,8 @@ for (let i = 0; i < 10; i++) T.update(1 / 60);
 assert(T.game.stones.every(s => !s.ember), 'ember blast déclenché');
 
 // 8. render ne crash pas (ctx stub), y compris POW burst, speed lines et passe comic
-T.newTowerFloor();
-const boss = T.game.cur.live.find(b => b.boss);
-boss.state = 'charge'; boss.cdx = 1; boss.cdy = 0;
+const boss = T.game.cur.live.find(b => b.boss) || T.game.cur.live[0];
+if (boss) { boss.state = 'charge'; boss.cdx = 1; boss.cdy = 0; }
 T.game.floats.push({ x: 100, y: 100, txt: 'KRAK!', color: '#fff', life: 0.8, pow: true, rot: 0.1 });
 T.render();
 assert(true, 'render() sans crash');

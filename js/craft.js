@@ -105,7 +105,7 @@ function onEnemyDeath(room,e){
   if(game.stats.lifemeat)game.hunger=Math.min(100,game.hunger+game.stats.lifemeat);
   burst(e.x,e.y,'#d0392b',e.boss?34:18,TILE*(e.boss?5:3.6));
   floatText(e.x,e.y-e.r-14,e.boss?'DOOM!':POW_WORDS[Math.random()*POW_WORDS.length|0],'#ff8c2e',true);
-  if(e.boss){sfx('boss');shake=12;relicDrop();}
+  if(e.boss){sfx('boss');shake=14;win();}
 }
 function checkClear(room){
   if(room.spawned&&room.live.length===0&&!room.cleared){
@@ -130,16 +130,12 @@ function restartRoom(){
   room.obst=null;room.live=[];room.drops=[];room.items=[];
   room.grok=null;room.shrine=null;room.slabT=0;room.tileHP={};
   room.cleared=false;room.spawned=false;
-  buildRoom(room,game.depth);
+  buildRoom(room,room.tier);
   game.stones.length=0;game.spits.length=0;game.bolas.length=0;game.parts.length=0;game.floats.length=0;
   for(const p of game.players){if(p.down){p.down=false;p.hp=2;}}
-  if(room.type==='tower'){
-    room.spawned=true;
-    room.live.push(newBoss(game.towerTier));
-    placePlayers(8.5*TILE,8.6*TILE);
-  } else if(['normal','water','dino','exit','treasure'].includes(room.type)&&room.type!=='start'){
+  if(['normal','water','dino','exit','treasure'].includes(room.type)&&room.type!=='start'){
     placePlayers(8.5*TILE,8.8*TILE);
-    spawnEnemies(room,game.depth,'s');
+    spawnEnemies(room,room.tier,'s');
     if(room.live.length>0){room.slabT=.35;}
     else room.cleared=true;
   } else {

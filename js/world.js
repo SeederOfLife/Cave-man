@@ -16,31 +16,30 @@ let game=null,shake=0,msgTimer=0;
 function showMsg(t){const m=document.getElementById('msg');m.textContent=t;m.style.opacity=1;msgTimer=2.8;}
 
 // ---------- floor generation ----------
-// Fixed MOBA map (vertical). Base at the bottom (0,0), objective boss at the top
-// (0,-4). Three lanes rise north — SOLO gx=-2, MID gx=0, BOT gx=2 — with jungle
-// rooms (gx=-1, gx=1) between them, so you can push a lane straight to the boss
-// or peel into the jungle to farm camps and cut between lanes. Same map every
-// depth; deeper = tougher mobs (depth scales stats in newEnemy).
-const MOBA_LANES=[-2,0,2], MOBA_JUNGLE=[-1,1];
-function genFloor(depth){
+// One persistent MOBA map (no dungeon levels). Base at the bottom (0,0), guardian
+// objective at the top (0,-6). Three lanes rise north — SOLO gx=-2, MID gx=0,
+// BOT gx=2 — with fractal jungle clusters between them (gx=-1, gx=1): each jungle
+// column alternates fight camps ('dino'), hide rooms ('brush', dense cover to
+// duck and reposition), and a buff (shrine / relic). Difficulty is by position,
+// not by depth: room.tier grows the further north you push (base easy → boss hard).
+const MOBA_LANES=[-2,0,2];
+function genFloor(){
   const rooms={};
-  const add=(x,y,type)=>{rooms[key(x,y)]={gx:x,gy:y,type:type||'normal',visited:false,cleared:false,spawned:false,
-    seed:(Math.random()*1e9)|0,obst:null,live:[],items:[],grok:null,shrine:null,slabT:0,tileHP:{},drops:[]};};
-  add(0,0,'start');                              // home base (Silent Trader)
-  add(-1,0,'grok');                              // ally camp beside base
-  add(1,0,'dino');                               // base-side jungle camp
-  for(let gy=-1;gy>=-3;gy--){
-    for(const gx of MOBA_LANES)add(gx,gy,'normal'); // lane creeps to farm
-    for(const gx of MOBA_JUNGLE)add(gx,gy,'dino');  // jungle camps
+  const add=(x,y,type)=>{rooms[key(x,y)]={gx:x,gy:y,type:type||'normal',tier:Math.max(1,-y),
+    visited:false,cleared:false,spawned:false,seed:(Math.random()*1e9)|0,
+    obst:null,live:[],items:[],grok:null,shrine:null,slabT:0,tileHP:{},drops:[]};};
+  add(0,0,'start');add(-1,0,'grok');add(1,0,'dino');           // base cluster
+  // fractal jungle columns: camp / hide / buff, repeating up each side
+  const JL={'-1':'brush','-2':'dino','-3':'shrine','-4':'brush','-5':'dino'};
+  const JR={'-1':'brush','-2':'dino','-3':'treasure','-4':'brush','-5':'dino'};
+  for(let gy=-1;gy>=-5;gy--){
+    for(const gx of MOBA_LANES)add(gx,gy,'normal');            // lane creeps
+    add(-1,gy,JL[gy]);add(1,gy,JR[gy]);                        // jungle clusters
   }
-  add(-1,-2,'shrine');                           // jungle shrine buff
-  add(1,-2,'treasure');                          // jungle relic camp
-  add(0,-4,'exit');                              // top objective — guarded hole down
+  add(0,-6,'exit');                                            // guardian objective
   for(const r of Object.values(rooms)){
     r.doors={};
-    for(const d of ['n','s','w','e']){
-      if(rooms[key(r.gx+DIRV[d][0],r.gy+DIRV[d][1])])r.doors[d]=true;
-    }
+    for(const d of ['n','s','w','e'])if(rooms[key(r.gx+DIRV[d][0],r.gy+DIRV[d][1])])r.doors[d]=true;
   }
   const startR=rooms[key(0,0)];
   startR.cleared=true;startR.spawned=true;startR.visited=true;
@@ -63,6 +62,7 @@ function buildRoom(room,depth){
       const v=g(i,j);
       let cell=O_NONE;
       if(room.type==='water'){if(v<.18)cell=O_WATER;else if(v<.26)cell=O_ROCK;}
+      else if(room.type==='brush'){if(v<.30)cell=O_ROOT;else if(v<.42)cell=O_ROCK;}
       else if(room.type==='dino'){if(v<.16)cell=O_ROCK;}
       else if(['treasure','grok','start','shrine'].includes(room.type)){if(v<.06)cell=O_BONES;}
       else{if(v<.1)cell=O_ROCK;else if(v<.14)cell=(depth>=3&&v<.12)?O_OBROCK:O_ROCK;else if(v<.18)cell=O_ROOT;else if(v<.21)cell=O_BONES;else if(v<.24&&depth>=2)cell=O_WATER;}
@@ -81,11 +81,13 @@ function buildRoom(room,depth){
     else if(obst[j][i]===O_OBROCK)room.tileHP[i+','+j]=4;
   }
   if(room.type==='shrine')room.shrine={ti:8,tj:5,used:false};
-  if(room.type==='treasure')room.items.push({type:(depth%2?'flint_item':'heart'),ti:8,tj:5,bob:0,pedestal:true});
+  if(room.type==='treasure')room.items.push({type:(depth>=3?'flint_item':'heart'),ti:8,tj:5,bob:0,pedestal:true});
   if(room.type==='grok')room.grok={ti:8,tj:5,gave:false,t:Math.random()*10};
 }
 function spawnEnemies(room,depth,entryDir){
   room.spawned=true;
+  // the guardian objective is a single boss (killing it wins the run)
+  if(room.type==='exit'){room.live.push(newBoss(2));sfx('boss');shake=8;return;}
   const defs=[];
   function pick(pool,n){const out=[];for(let i=0;i<n;i++)out.push(pool[Math.random()*pool.length|0]);return out;}
   const mult=game&&game.twoP?1:0;
@@ -97,7 +99,6 @@ function spawnEnemies(room,depth,entryDir){
   }
   else if(room.type==='water'){defs.push('bat','bat');if(depth>=2)defs.push('dino');if(mult)defs.push('bat');}
   else if(room.type==='dino'){defs.push('dino','dino');defs.push(depth>=2?'boar':'bat');if(depth>=4)defs.push('slither');if(mult)defs.push('dino');}
-  else if(room.type==='exit'){defs.push('bear');if(depth>=2)defs.push(depth>=3?'boar':'bear');if(depth>=4)defs.push('slither');if(mult)defs.push('bat');}
   else if(room.type==='treasure'&&depth>=3)defs.push(depth>=4?'spider':'bat');
   const ed=DOOR[OPP[entryDir]||'s'];
   const cells=[];

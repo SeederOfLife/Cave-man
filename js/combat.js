@@ -41,7 +41,7 @@ function updateBoss(e,T,dt,room){
     if(e.tier>=3)adds.push(e.serpent?'slither':'boar');
     for(const a of adds){
       const ang=Math.random()*6.3;
-      room.live.push(newEnemy(a,e.x+Math.cos(ang)*TILE*2,e.y+Math.sin(ang)*TILE*2,game.depth));
+      room.live.push(newEnemy(a,e.x+Math.cos(ang)*TILE*2,e.y+Math.sin(ang)*TILE*2,Math.min(3,game.depth)));
     }
     sfx('boss');shake=7;
   }
@@ -56,7 +56,7 @@ function startTrans(dir){
   const nx=room.gx+DIRV[dir][0],ny=room.gy+DIRV[dir][1];
   const next=game.rooms[key(nx,ny)];
   if(!next)return;
-  buildRoom(next,game.depth);
+  buildRoom(next,next.tier);
   game.stones.length=0;game.spits.length=0;game.bolas.length=0;game.parts.length=0;game.floats.length=0;
   game.trans={dir,from:room,to:next,t:0};
 }
@@ -67,6 +67,7 @@ function updateTrans(dt){
     const dir=T.dir,next=T.to;
     game.cur=next;
     next.visited=true;
+    game.depth=next.tier; // drives darkness / ambience by how far north you've pushed
     const od=DOOR[OPP[dir]];
     const bx=(od.ti+.5)*TILE+(OPP[dir]==='w'?TILE*.9:OPP[dir]==='e'?-TILE*.9:0);
     const by=(od.tj+.5)*TILE+(OPP[dir]==='n'?TILE*.9:OPP[dir]==='s'?-TILE*.9:0);
@@ -78,7 +79,7 @@ function updateTrans(dt){
     revivePlayers();
     game.trans=null;
     if(!next.spawned&&['normal','water','dino','exit','treasure'].includes(next.type)){
-      spawnEnemies(next,game.depth,dir);
+      spawnEnemies(next,next.tier,dir);
       for(const en of next.live)burst(en.x,en.y,'#6b5c4d',8,TILE*2);
       if(next.live.length>0){sfx('slam');shake=5;next.slabT=.35;}
       else next.cleared=true;
@@ -124,10 +125,22 @@ function die(from){
   ov.innerHTML=`
     <div class="caption">☠ THE TRIBE ENDS HERE ☠</div>
     <h1 class="comic-title" style="font-size:34px;margin:14px 0 16px">SLAIN BY ${from||'THE CAVE'}</h1>
-    <div style="font-size:15px;line-height:2;margin-bottom:20px">REACHED ${game.mode==='tower'?'TOWER '+game.towerTier:'CAVE '+game.depth}<br>BONKED <b style="color:#ffa63e">${game.kills}</b> BEAST${game.kills===1?'':'S'}</div>
+    <div style="font-size:15px;line-height:2;margin-bottom:20px">BONKED <b style="color:#ffa63e">${game.kills}</b> BEAST${game.kills===1?'':'S'}</div>
     <div><button onclick="deathRestart()">ROCK AGAIN</button>
     <button onclick="goTitle()">TITLE</button></div>
     <div class="tbc">TO BE CONTINUED... ?</div>`;
+}
+function win(){
+  game.dead=true;sfx('clear');game.clearFlash=.6;
+  const ov=document.getElementById('death');
+  ov.classList.remove('hidden');
+  ov.innerHTML=`
+    <div class="caption">★ THE GUARDIAN FALLS ★</div>
+    <h1 class="comic-title" style="font-size:34px;margin:14px 0 16px">THE FIRST TOWER IS YOURS</h1>
+    <div style="font-size:15px;line-height:2;margin-bottom:20px">URM SAYS NOTHING.<br>BONKED <b style="color:#ffa63e">${game.kills}</b> BEAST${game.kills===1?'':'S'} ON THE WAY UP</div>
+    <div><button onclick="deathRestart()">CLIMB AGAIN</button>
+    <button onclick="goTitle()">TITLE</button></div>
+    <div class="tbc">THE TRIBE WILL REMEMBER.</div>`;
 }
 function deathRestart(){
   document.getElementById('death').classList.add('hidden');

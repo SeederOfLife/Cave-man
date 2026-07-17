@@ -58,15 +58,16 @@ Kills feed the tribe's wisdom (XP). Each level, the tribe deepens **one** of the
 
 ## The Map (a MOBA carved in stone)
 
-Each depth is the same shape, the way the old wars were fought: your **base** at the bottom, the **guardian** at the top, and between them three **lanes** — solo, mid, bot — rising north through rooms of lane-beasts you can farm. Between the lanes lie the **jungle** rooms: tougher camps, richer loot, the shrine and the relic. Push a lane straight at the guardian, or work the jungle first and come at it fed and armed. Doors slam shut in a fight room until it is cleared, so the map is a chain of encounters and every step is a choice of route.
+There are no floors to descend — there is only the one map, the way the old wars were fought: your **base** at the bottom, the **guardian** at the top, and between them three **lanes** — solo, mid, bot — rising north through rooms of lane-beasts you can farm. Between the lanes lie the **jungle** clusters, each a little map of its own: fight camps, **hides** (brush thick enough to vanish into and slip a lane), a shrine, a relic. The further north you push, the meaner the beasts. Push a lane straight at the guardian, or work the jungle first and come at it fed and armed. Doors slam shut in a fight room until it is cleared, so the map is a chain of encounters and every step is a choice of route. Fell the guardian and the First Tower is yours.
 
 - **Base** — home, and the Silent Trader's wall. Safe.
 - **Lanes** (solo/mid/bot) — the fight rooms, lane-beasts to farm.
-- **Jungle** — camps between the lanes: harder packs, better drops.
+- **Jungle camp** — packs between the lanes: harder, better drops.
+- **Jungle hide** (brush) — no beasts, thick cover: duck in, catch a breath, slip to another lane, cut the roots for wood.
 - **Shrine of Urm** — a carved menhir in the jungle. Touch it once: healing, a material, silence.
-- **Relic camp** — a shiny on a pedestal, guarded deeper down.
+- **Relic camp** — a shiny on a pedestal, guarded the deeper north you go.
 - **Grok** — the friend, camped beside base. Feeds, heals, shares a rumor.
-- **The Guardian's Hole** — sealed under a slab until the guardian dies. It only goes down.
+- **The Guardian** — the Slither-Priest bars the top of the tower. Fell it and the run is won; the tribe remembers.
 
 ## The Road to the Tower (Multiplayer / MOBA Roadmap)
 
