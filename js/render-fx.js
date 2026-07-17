@@ -6,22 +6,51 @@ function roundRect(c,x,y,w,h,r){
   if(c.roundRect){c.roundRect(x,y,w,h,r);}
   else{c.rect(x,y,w,h);}
 }
+// one animated leg: dark cel-outline underlay, then skin, then a foot
+function drawLeg(cx,hx,hipY,footX,footY,pal,face){
+  ctx.lineCap='round';
+  ctx.strokeStyle='#17100a';ctx.lineWidth=TILE*.135;
+  ctx.beginPath();ctx.moveTo(hx,hipY);ctx.quadraticCurveTo((hx+footX)/2,(hipY+footY)/2+TILE*.03,footX,footY);ctx.stroke();
+  ctx.strokeStyle=pal.skinD;ctx.lineWidth=TILE*.1;
+  ctx.beginPath();ctx.moveTo(hx,hipY);ctx.quadraticCurveTo((hx+footX)/2,(hipY+footY)/2+TILE*.03,footX,footY);ctx.stroke();
+  ell(ctx,footX+face*TILE*.02,footY,TILE*.08,TILE*.05,'#17100a');
+  ell(ctx,footX+face*TILE*.025,footY-TILE*.005,TILE*.06,TILE*.036,pal.skin);
+}
+// walk cycle: legs swing along screen-x and lift on the forward step; neutral stance when idle
+function drawHeroLegs(P){
+  const pal=HERO_PAL[P.id]||HERO_PAL[0];
+  const face=P.face<0?-1:1;
+  const moving=P.walk>0.001;
+  const sw=moving?Math.sin(P.walk):0;
+  const stride=TILE*.15,lift=TILE*.08,base=TILE*.07;
+  const hipY=P.y+TILE*.03,footY=P.y+TILE*.42;
+  drawLeg(P.x,P.x+TILE*.05,hipY,P.x+base+sw*stride,footY-Math.max(0,sw)*lift,pal,face);
+  drawLeg(P.x,P.x-TILE*.05,hipY,P.x-base-sw*stride,footY-Math.max(0,-sw)*lift,pal,face);
+}
 function drawPlayerLocal(P){
-  const hop=Math.abs(Math.sin(P.walk))*TILE*.06;
   const blink=P.hurtCd>0&&(game.time*20|0)%2===0;
   if(blink)return;
+  const moving=P.walk>0.001;
+  const hop=(moving?Math.abs(Math.sin(P.walk)):0)*TILE*.05;
+  drawHeroLegs(P);
   ctx.save();
   ctx.translate(P.x,P.y-hop);
+  if(moving)ctx.rotate((P.face<0?-1:1)*Math.sin(P.walk*.5)*.035); // lean into the stride
   ctx.scale(P.face<0?-1:1,1);
   const w=TILE*1.05;
   ctx.drawImage(P.id===0?SPR.caveman:SPR.caveman2,-w/2,-w*.58,w,w);
   ctx.restore();
 }
 function drawPlayerScreen(P,ax,ay){
+  if(P.down)return;
+  const pal=HERO_PAL[P.id]||HERO_PAL[0];
   ctx.save();resetT(ctx);ctx.translate(ax,ay);
+  // static idle legs during the room-slide transition
+  drawLeg(0,-TILE*.05,TILE*.03,-TILE*.1,TILE*.42,pal,-1);
+  drawLeg(0,TILE*.05,TILE*.03,TILE*.1,TILE*.42,pal,1);
   ctx.scale(P.face<0?-1:1,1);
   const w=TILE*1.05;
-  if(!P.down)ctx.drawImage(P.id===0?SPR.caveman:SPR.caveman2,-w/2,-w*.58,w,w);
+  ctx.drawImage(P.id===0?SPR.caveman:SPR.caveman2,-w/2,-w*.58,w,w);
   ctx.restore();
 }
 function drawPainting(x,y,v,tower){

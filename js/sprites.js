@@ -33,65 +33,75 @@ function heartPath(g,s){
   g.bezierCurveTo(s*.96,s*.3,s*.92,s*.58,s*.5,s*.88);
   g.closePath();
 }
-// muscular pulp barbarian, 3/4 front, head turned right, club raised
+// handsome long-haired barbarian (Jondalar × Conan), HIPS-UP only — the legs
+// are drawn & animated procedurally at render time (drawHeroLegs in render-fx.js).
 function drawHunter(g,s,skin,skinD,hair,tunic,tunicD){
-  const skHi=lg(g,s*.3,s*.3,s*.7,s*.7,'#fff2d8',skin);
-  // ---- club, raised high in the right fist ----
-  g.strokeStyle='#5a3a1e';g.lineWidth=s*.07;g.lineCap='round';
-  g.beginPath();g.moveTo(s*.7,s*.42);g.lineTo(s*.9,s*.12);g.stroke();
-  g.fillStyle=rg(g,s*.9,s*.11,s*.11,'#9a6636','#4a2f18');
-  g.beginPath();g.ellipse(s*.9,s*.12,s*.12,s*.095,-.7,0,7);g.fill();
-  g.fillStyle='#3c2614';g.beginPath();g.arc(s*.85,s*.1,s*.02,0,7);g.arc(s*.95,s*.15,s*.016,0,7);g.fill();
-  // ---- legs, planted wide ----
-  g.fillStyle=skinD;
-  g.beginPath();g.moveTo(s*.38,s*.6);g.quadraticCurveTo(s*.31,s*.78,s*.34,s*.92);g.lineTo(s*.47,s*.92);g.quadraticCurveTo(s*.47,s*.75,s*.47,s*.62);g.closePath();g.fill();
-  g.beginPath();g.moveTo(s*.53,s*.6);g.quadraticCurveTo(s*.62,s*.77,s*.66,s*.92);g.lineTo(s*.75,s*.9);g.quadraticCurveTo(s*.66,s*.72,s*.6,s*.6);g.closePath();g.fill();
-  groove(g,s,[.4,.66,.4,.86]);groove(g,s,[.58,.66,.63,.86]);
-  // ---- fur loincloth ----
-  g.fillStyle=lg(g,s*.5,s*.56,s*.5,s*.72,tunic,tunicD);
-  g.beginPath();g.moveTo(s*.34,s*.56);g.lineTo(s*.66,s*.56);g.lineTo(s*.7,s*.7);
-  g.quadraticCurveTo(s*.5,s*.66,s*.3,s*.7);g.closePath();g.fill();
-  g.strokeStyle=tunicD;g.lineWidth=s*.02;
-  for(let i=0;i<5;i++){g.beginPath();g.moveTo(s*(.36+i*.07),s*.68);g.lineTo(s*(.35+i*.07),s*.76);g.stroke();}
-  // ---- torso: V-shape, pecs + abs ----
-  g.fillStyle=skHi;
-  g.beginPath();g.moveTo(s*.3,s*.4);g.quadraticCurveTo(s*.5,s*.34,s*.7,s*.4);
-  g.lineTo(s*.64,s*.58);g.quadraticCurveTo(s*.5,s*.63,s*.36,s*.58);g.closePath();g.fill();
-  // pec + ab grooves, navel line
-  groove(g,s,[.5,.4,.5,.56]);
-  groove(g,s,[.38,.46,.5,.5,.62,.46]);
-  groove(g,s,[.42,.53,.58,.53]);
-  // ---- arms: thick, one raised (right) one at side (left) ----
+  // ---- long flowing mane, behind everything ----
+  g.fillStyle=hair;
+  g.beginPath();g.moveTo(s*.42,s*.14);
+  g.quadraticCurveTo(s*.16,s*.3,s*.26,s*.62);
+  g.quadraticCurveTo(s*.33,s*.7,s*.43,s*.6);
+  g.quadraticCurveTo(s*.34,s*.4,s*.5,s*.2);g.closePath();g.fill();
+  g.beginPath();g.moveTo(s*.6,s*.14);
+  g.quadraticCurveTo(s*.82,s*.3,s*.73,s*.6);
+  g.quadraticCurveTo(s*.66,s*.68,s*.57,s*.58);
+  g.quadraticCurveTo(s*.62,s*.38,s*.54,s*.16);g.closePath();g.fill();
+  g.strokeStyle='rgba(0,0,0,.2)';g.lineWidth=s*.012;g.lineCap='round';
+  g.beginPath();g.moveTo(s*.3,s*.32);g.quadraticCurveTo(s*.28,s*.5,s*.35,s*.6);
+  g.moveTo(s*.69,s*.34);g.quadraticCurveTo(s*.71,s*.5,s*.63,s*.58);g.stroke();
+  // ---- club raised high in right fist ----
+  g.strokeStyle='#5a3a1e';g.lineWidth=s*.06;g.lineCap='round';
+  g.beginPath();g.moveTo(s*.72,s*.4);g.lineTo(s*.9,s*.12);g.stroke();
+  g.fillStyle=rg(g,s*.9,s*.11,s*.1,'#9a6636','#4a2f18');
+  g.beginPath();g.ellipse(s*.9,s*.12,s*.11,s*.085,-.7,0,7);g.fill();
+  g.fillStyle='#3c2614';g.beginPath();g.arc(s*.86,s*.1,s*.017,0,7);g.arc(s*.94,s*.15,s*.014,0,7);g.fill();
+  // ---- fur loincloth (bottom of the hips-up sprite) ----
+  g.fillStyle=lg(g,s*.5,s*.54,s*.5,s*.68,tunic,tunicD);
+  g.beginPath();g.moveTo(s*.35,s*.54);g.lineTo(s*.65,s*.54);g.lineTo(s*.67,s*.68);
+  g.quadraticCurveTo(s*.5,s*.64,s*.33,s*.68);g.closePath();g.fill();
+  g.strokeStyle=tunicD;g.lineWidth=s*.018;
+  for(let i=0;i<4;i++){g.beginPath();g.moveTo(s*(.4+i*.06),s*.65);g.lineTo(s*(.39+i*.06),s*.71);g.stroke();}
+  // ---- muscular torso (V), pecs + abs ----
+  g.fillStyle=rg(g,s*.5,s*.42,s*.2,'#f6dcb4',skinD);
+  g.beginPath();g.moveTo(s*.32,s*.36);g.quadraticCurveTo(s*.5,s*.3,s*.68,s*.36);
+  g.lineTo(s*.62,s*.56);g.quadraticCurveTo(s*.5,s*.6,s*.38,s*.56);g.closePath();g.fill();
+  groove(g,s,[.5,.36,.5,.54]);
+  groove(g,s,[.4,.42,.5,.46,.6,.42]);
+  groove(g,s,[.43,.5,.57,.5]);
+  // ---- arms: right raised to club, left at side ----
   g.fillStyle=skin;
-  // right upper arm to club
-  g.beginPath();g.moveTo(s*.62,s*.42);g.quadraticCurveTo(s*.74,s*.4,s*.72,s*.44);g.quadraticCurveTo(s*.68,s*.44,s*.64,s*.5);g.closePath();g.fill();
-  ell(g,s*.72,s*.43,s*.06,s*.05,skin);       // right shoulder/bicep
-  ell(g,s*.3,s*.48,s*.055,s*.09,skin);        // left arm hanging
-  ell(g,s*.3,s*.6,s*.045,s*.05,skinD);        // left fist
-  rim(g,s*.3,s*.5,s*.075,2.4,3.9);            // rim on left arm
-  // ---- head, turned right, strong jaw ----
-  g.fillStyle=rg(g,s*.52,s*.28,s*.16,'#f6dcb4',skinD);
-  g.beginPath();g.moveTo(s*.4,s*.24);g.quadraticCurveTo(s*.42,s*.12,s*.54,s*.12);
-  g.quadraticCurveTo(s*.66,s*.13,s*.66,s*.26);g.quadraticCurveTo(s*.66,s*.38,s*.54,s*.4);
-  g.quadraticCurveTo(s*.44,s*.39,s*.4,s*.24);g.closePath();g.fill();
-  // wild mane
+  g.beginPath();g.moveTo(s*.64,s*.38);g.quadraticCurveTo(s*.77,s*.38,s*.73,s*.44);g.quadraticCurveTo(s*.68,s*.44,s*.64,s*.5);g.closePath();g.fill();
+  ell(g,s*.71,s*.42,s*.055,s*.05,skin);       // right shoulder/bicep
+  ell(g,s*.3,s*.47,s*.052,s*.1,skin);          // left arm hanging
+  ell(g,s*.3,s*.59,s*.042,s*.045,skinD);       // left fist
+  rim(g,s*.3,s*.49,s*.07,2.4,3.9);             // rim on left arm
+  // ---- head, handsome strong jaw ----
+  g.fillStyle=rg(g,s*.53,s*.24,s*.15,'#f6dcb4',skinD);
+  g.beginPath();g.moveTo(s*.42,s*.22);g.quadraticCurveTo(s*.43,s*.09,s*.55,s*.09);
+  g.quadraticCurveTo(s*.66,s*.1,s*.65,s*.24);
+  g.quadraticCurveTo(s*.64,s*.37,s*.53,s*.39);
+  g.quadraticCurveTo(s*.45,s*.37,s*.42,s*.22);g.closePath();g.fill();
+  // front fringe framing the face
   g.fillStyle=hair;
-  g.beginPath();g.moveTo(s*.38,s*.28);g.quadraticCurveTo(s*.3,s*.1,s*.46,s*.06);
-  g.quadraticCurveTo(s*.62,s*.02,s*.66,s*.16);g.quadraticCurveTo(s*.6,s*.1,s*.5,s*.11);
-  g.quadraticCurveTo(s*.42,s*.13,s*.42,s*.24);g.closePath();g.fill();
-  ell(g,s*.4,s*.28,s*.05,s*.09,hair);          // sideburn/beard edge
-  // beard
-  g.fillStyle=hair;
-  g.beginPath();g.moveTo(s*.44,s*.34);g.quadraticCurveTo(s*.54,s*.46,s*.62,s*.34);
-  g.quadraticCurveTo(s*.58,s*.4,s*.53,s*.4);g.quadraticCurveTo(s*.48,s*.4,s*.44,s*.34);g.closePath();g.fill();
-  // brow ridge, eyes, scowl
-  g.strokeStyle=hair;g.lineWidth=s*.03;g.lineCap='round';
-  g.beginPath();g.moveTo(s*.5,s*.24);g.lineTo(s*.63,s*.23);g.stroke();
+  g.beginPath();g.moveTo(s*.42,s*.2);g.quadraticCurveTo(s*.4,s*.07,s*.57,s*.06);
+  g.quadraticCurveTo(s*.5,s*.11,s*.46,s*.2);g.closePath();g.fill();
+  ell(g,s*.42,s*.26,s*.028,s*.09,hair);        // sideburn strand
+  // headband (hippie / barbarian)
+  g.strokeStyle=tunicD;g.lineWidth=s*.028;g.lineCap='round';
+  g.beginPath();g.moveTo(s*.42,s*.17);g.lineTo(s*.66,s*.16);g.stroke();
+  g.fillStyle=tunic;g.beginPath();g.arc(s*.44,s*.17,s*.016,0,7);g.fill();
+  // straight nose, brow, eyes
+  g.strokeStyle=skinD;g.lineWidth=s*.013;
+  g.beginPath();g.moveTo(s*.6,s*.24);g.lineTo(s*.62,s*.3);g.lineTo(s*.58,s*.31);g.stroke();
+  g.strokeStyle=hair;g.lineWidth=s*.02;
+  g.beginPath();g.moveTo(s*.5,s*.23);g.lineTo(s*.62,s*.22);g.stroke();
   g.fillStyle='#241a10';
-  g.beginPath();g.arc(s*.54,s*.27,s*.02,0,7);g.fill();
-  g.beginPath();g.arc(s*.62,s*.27,s*.02,0,7);g.fill();
-  // cheek/jaw shadow
-  groove(g,s,[.42,.3,.46,.36],.018,'rgba(0,0,0,.25)');
+  g.beginPath();g.arc(s*.545,s*.26,s*.018,0,7);g.fill();
+  g.beginPath();g.arc(s*.62,s*.255,s*.018,0,7);g.fill();
+  // stubble + slight smirk
+  groove(g,s,[.46,.33,.56,.35],.016,'rgba(0,0,0,.18)');
+  g.strokeStyle='#2e1e10';g.lineWidth=s*.013;g.lineCap='round';
+  g.beginPath();g.moveTo(s*.55,s*.335);g.lineTo(s*.6,s*.325);g.stroke();
 }
 function outlined(c,col,px){
   col=col||'#17100a';px=px||3.5;

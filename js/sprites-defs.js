@@ -2,10 +2,15 @@
 // ---------- SPR dictionary + cel-outline pass ----------
 // Load order matters: see index.html. Plain script scope, no modules.
 const SPR={};
-// heroes: muscular pulp barbarians (palette variants of drawHunter). Beasts live
-// in sprites-beasts.js, bosses/npcs in sprites-boss.js.
-SPR.caveman=mkS((g,s)=>drawHunter(g,s,'#d9a066','#9a6a3e','#3a2414','#8a5a30','#5a3a1e'));
-SPR.caveman2=mkS((g,s)=>drawHunter(g,s,'#c98f5a','#8a5a36','#1c1410','#4a4478','#332a52'));
+// heroes: long-haired barbarians (Jondalar-blond P1, Conan-dark P2). Palettes are
+// shared so the procedural animated legs (render-fx.js) match the sprite skin.
+// [skin, skinD, hair, tunic, tunicD]
+const HERO_PAL=[
+  {skin:'#e0ad72',skinD:'#a9793f',hair:'#c9a24a',tunic:'#8a5a30',tunicD:'#5a3a1e'},
+  {skin:'#cf9a63',skinD:'#8f6238',hair:'#241a12',tunic:'#4a4478',tunicD:'#332a52'},
+];
+SPR.caveman=mkS((g,s)=>{const p=HERO_PAL[0];drawHunter(g,s,p.skin,p.skinD,p.hair,p.tunic,p.tunicD);});
+SPR.caveman2=mkS((g,s)=>{const p=HERO_PAL[1];drawHunter(g,s,p.skin,p.skinD,p.hair,p.tunic,p.tunicD);});
 SPR.meat=mkS((g,s)=>{
   g.strokeStyle='#e8d9c0';g.lineWidth=s*.09;g.lineCap='round';
   g.beginPath();g.moveTo(s*.62,s*.62);g.lineTo(s*.8,s*.8);g.stroke();
