@@ -65,7 +65,7 @@ vm.createContext(sandbox);
 
 const src = files.map(f => readFileSync(join(ROOT, f), 'utf8')).join('\n')
   + `\n;globalThis.__T = { start, update, render, keepInRoom, checkClear, newEnemy, keys,
-       buildRoom, spawnEnemies, onEnemyDeath, shopBuy, castSkill, chooseSkill, gainXp, recalcStats,
+       buildRoom, spawnEnemies, spawnWave, onEnemyDeath, shopBuy, castSkill, chooseSkill, gainXp, recalcStats,
        ITEM_BY_ID, COMPS, SHOP_TABS, SKILLS,
        get game() { return game }, get TILE() { return TILE } };`;
 vm.runInContext(src, sandbox, { filename: 'game-concat.js' });
@@ -164,6 +164,30 @@ assert(T.game.cur.live.every(e => Number.isFinite(e.x) && Number.isFinite(e.y)),
 T.game.stones.push({ x: 3 * T.TILE, y: 3 * T.TILE, vx: 0, vy: 0, life: 0.05, dmg: 2, pierce: 0, ember: true });
 for (let i = 0; i < 10; i++) T.update(1 / 60);
 assert(T.game.stones.every(s => !s.ember), 'ember blast déclenché');
+
+// 7bis. escalade dans le temps : mêmes bêtes plus fortes plus tard
+T.game.warT = 0; T.game.hordeBuff = 0;
+const hpEarly = T.newEnemy('bear', 0, 0, 1).maxhp;
+T.game.warT = 300;
+const hpLate = T.newEnemy('bear', 0, 0, 1).maxhp;
+assert(hpLate > hpEarly, `les bêtes durcissent avec le temps (${hpEarly}→${hpLate})`);
+T.game.warT = 0;
+
+// 7ter. lords : élite dans un camp jungle ; sa mort renforce la horde
+const camp = R['1,-2']; // jungle 'dino' camp
+camp.spawned = false; camp.live = [];
+T.buildRoom(camp, camp.tier);
+T.spawnEnemies(camp, camp.tier, 's');
+const lord = camp.live.find(e => e.lord);
+assert(lord && lord.maxhp > 10, 'camp jungle a un LORD tanky');
+const hb0 = T.game.hordeBuff; T.game.cur = camp;
+T.onEnemyDeath(camp, lord);
+assert(T.game.hordeBuff === hb0 + 1, 'tuer le lord renforce la horde');
+
+// 7quater. vagues : un creep qui marche vers la base pop
+const lane = R['0,-1']; lane.live = [];
+T.spawnWave(lane);
+assert(lane.live.length === 1 && lane.live[0].march, 'vague : creep marcheur pop');
 
 // 8. render ne crash pas (ctx stub), y compris POW burst, speed lines et passe comic
 const boss = T.game.cur.live.find(b => b.boss) || T.game.cur.live[0];

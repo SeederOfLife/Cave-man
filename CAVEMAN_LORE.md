@@ -69,6 +69,8 @@ There are no floors to descend — there is only the one map, the way the old wa
 - **Grok** — the friend, camped beside base. Feeds, heals, shares a rumor.
 - **The Guardian** — the Slither-Priest bars the top of the tower. Fell it and the run is won; the tribe remembers.
 
+The tower is never still. Beasts keep coming — waves of them, marching down the lanes toward the base like a tide that never goes out — and the longer the war runs, the meaner they grow. Doors never bar you: you rove, you farm what you can take, and what you cannot, you slip past — the brush is thick enough to swallow a hunter whole. In the jungle sit the **lords**, elite beasts crowned in the old way; kill one and its loot is rich, but the horde feels it and hardens. Strength taken is strength the war repays. Choose like a hunter.
+
 ## The Road to the Tower (Multiplayer / MOBA Roadmap)
 
 The long-term vision: an online, room-based MOBA where players farm the dungeons for materials and crafted skills, then race — or fight — to the top of the First Tower.

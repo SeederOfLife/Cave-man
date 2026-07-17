@@ -114,6 +114,7 @@ function spawnEnemies(room,depth,entryDir){
     const [i,j]=cells.splice(Math.random()*cells.length|0,1)[0];
     room.live.push(newEnemy(d,(i+.5)*TILE,(j+.5)*TILE,depth));
   }
+  if(room.type==='dino'&&room.live.length)makeLord(room.live[0]); // jungle camp lord
 }
 function newEnemy(type,x,y,depth){
   const B={
@@ -125,11 +126,31 @@ function newEnemy(type,x,y,depth){
     slither:{hp:5+depth,spd:TILE*1.5,dmg:2,r:TILE*.3,fly:false,spr:SPR.slither,f:1.15},
   }[type];
   const D=DIFF[difficulty];
-  const hp2=Math.max(1,Math.round(B.hp*D.hp));
-  const dmg2=Math.max(1,Math.round(B.dmg*D.dmg));
+  // the war escalates: beasts harden slowly over time and with every lord felled
+  // (~+40% hp per minute, +12% per lord); noticeable across a long session, not explosive
+  const esc=1+(game?game.warT*0.0065+game.hordeBuff*0.12:0);
+  const hp2=Math.max(1,Math.round(B.hp*D.hp*esc));
+  const dmg2=Math.max(1,Math.round(B.dmg*D.dmg*(1+(game?game.warT*0.0025+game.hordeBuff*0.06:0))));
   return{type,x,y,hp:hp2,maxhp:hp2,spd:B.spd,dmg:dmg2,r:B.r,fly:B.fly,spr:B.spr,sc:TILE*B.f/S,
     ranged:type==='dino'||type==='slither',brave:type==='slither',lungeCd:1.2+Math.random(),
+    aggroR:TILE*4.6,march:false,
     vx:0,vy:0,t:Math.random()*10,hitFlash:0,wanderA:Math.random()*6.3,wanderT:0,spitCd:1+Math.random(),slow:0};
+}
+// jungle elite: tanky, hits harder, bigger, better loot; felling it hardens the horde
+function makeLord(e){
+  e.lord=true;e.hp=e.maxhp=Math.round(e.maxhp*3.2)+6;e.dmg+=1;e.sc*=1.45;e.r*=1.3;e.spd*=.85;e.aggroR=TILE*5.4;
+  return e;
+}
+// one marching creep enters from the enemy (north) side and pushes south — the
+// tower-defense pressure; if it reaches the base edge it despawns (it "pushed on")
+function spawnWave(room){
+  const pool=room.type==='dino'?['dino','boar','spider']:['bat','bear','spider'];
+  if(game.hordeBuff>=2)pool.push('slither');
+  const t=pool[Math.random()*pool.length|0];
+  const i=3+Math.random()*(C-6)|0;
+  const e=newEnemy(t,(i+.5)*TILE,1.5*TILE,room.tier);
+  e.march=true;
+  room.live.push(e);
 }
 function newBoss(tier){
   const serpent=tier>=2;

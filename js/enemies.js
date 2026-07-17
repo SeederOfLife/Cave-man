@@ -11,6 +11,29 @@ function updateEnemies(room,dt){
     if(!T)break;
     if(e.boss){updateBoss(e,T,dt,room);continue;}
     const dToP=Math.hypot(T.x-e.x,T.y-e.y)||1;
+    // sneak & tower-defense march: unaware beasts push south toward base; you can
+    // slip past them (and hide in brush) if you stay beyond their aggro radius.
+    let aggroR=e.aggroR||TILE*4.6;
+    if(room.type==='brush')aggroR*=.5;                 // brush hides you — sneak past
+    const aware=dToP<aggroR;
+    if(!aware){
+      if(e.march){                                     // tower-defense: push south to base
+        const eff=e.slow>0?e.spd*.3:e.spd*.55;
+        e.vx+=(-eff*.15-e.vx)*Math.min(1,dt*4);
+        e.vy+=(eff-e.vy)*Math.min(1,dt*4);
+        moveCircle(room,e,e.vx*dt,e.vy*dt,e.fly);keepInRoom(e);
+        if(e.y>(R-1.5)*TILE){e.hp=0;e.pushed=true;}    // reached the base edge → pushed on
+      } else {                                         // garrison idles/wanders until it spots you
+        e.wanderT-=dt;if(e.wanderT<=0){e.wanderA=Math.random()*6.3;e.wanderT=1+Math.random()*2.5;}
+        const eff=e.spd*.22;
+        e.vx+=(Math.cos(e.wanderA)*eff-e.vx)*Math.min(1,dt*3);
+        e.vy+=(Math.sin(e.wanderA)*eff-e.vy)*Math.min(1,dt*3);
+        moveCircle(room,e,e.vx*dt,e.vy*dt,e.fly);keepInRoom(e);
+      }
+      for(const p of alivePlayers())if(Math.hypot(p.x-e.x,p.y-e.y)<e.r+p.r-2)hurtPlayer(p,e.dmg,e.type.toUpperCase(),e);
+      continue;
+    }
+    e.march=false;                                     // spotted you — engage
     let tx,ty;
     // ranged cowards (dino) keep their distance; slither-men hold ground
     if(e.ranged&&!e.brave&&dToP<TILE*3.4){tx=(e.x-T.x)/dToP;ty=(e.y-T.y)/dToP;}

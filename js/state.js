@@ -20,6 +20,7 @@ function start(np){
     skillLv:{volley:1,step:1,howl:1,wrath:1},scd:{volley:0,step:0,howl:0},
     xp:0,level:1,pendingPts:0,ultCharge:0,lvlOpen:false,
     blockT:0,shieldT:0,decoy:null,reviveUsed:false,regenT:0,
+    warT:0,hordeBuff:0,warMsgT:60,
     pierce:0,projMul:1,craftOpen:false,
   };
   game.players.push(mkPlayer(0));
@@ -74,7 +75,8 @@ document.getElementById('start2btn').addEventListener('click',()=>{audio();start
 
 // ---------- solidity ----------
 function isDoorTile(ti,tj){for(const d in DOOR){if(DOOR[d].ti===ti&&DOOR[d].tj===tj)return d;}return null;}
-function roomDoorsOpen(room){return room.cleared||(room.spawned&&room.live.length===0);}
+// free roam: doors are never locked — you rove the map, farm, sneak, retreat
+function roomDoorsOpen(room){return true;}
 function solidAt(room,px,py,fly){
   const ti=px/TILE|0,tj=py/TILE|0;
   if(ti<0||tj<0||ti>=C||tj>=R)return true;

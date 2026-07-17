@@ -56,6 +56,12 @@ Le jeu vit dans `js/*.js`, des scripts classiques (pas de modules) chargés **da
 - **Carte MOBA unique et persistante** (`genFloor`, world.js) — **pas de niveaux de donjon, pas de descente**. Base au sud `(0,0)`, gardien-objectif au nord `(0,-6)`. 3 lanes verticales — SOLO `gx=-2`, MID `gx=0`, BOT `gx=2` — avec des **clusters de jungle fractals** entre elles (`gx=-1,1`) : chaque colonne alterne camps (`dino`), rooms de planque (`brush`, couvert dense pour se cacher/repositionner) et un buff (shrine / relic). Ne pas re-randomiser : la structure lanes/jungle est le cœur du design.
 - **Difficulté par position, pas par étage** : `room.tier = max(1, -gy)` (croît vers le nord). Passer `room.tier` à `buildRoom`/`spawnEnemies`/`newEnemy` — jamais `game.depth` (qui ne fait plus que suivre le tier courant pour l'ambiance/obscurité).
 - **Objectif = gardien boss** (room `exit`, `spawnEnemies` pousse `newBoss`). Le tuer déclenche `win()` — c'est la fin de run (victoire). Il n'y a plus de boss ailleurs.
+- **Carte vivante (MOBA + tower-defense)** — NE PAS revenir à un modèle « nettoyer la salle » :
+  - **Free-roam** : `roomDoorsOpen()` renvoie toujours `true`, portes jamais verrouillées. Les rooms lane/jungle ne se « clearent » jamais (`checkClear` les ignore).
+  - **Vagues continues** : `update()` appelle `spawnWave(room)` sur un timer dans les rooms `normal`/`dino` ; les creeps entrent au nord (`march:true`) et poussent vers la base au sud (tower-defense). S'ils atteignent le bord sud → despawn (`pushed`, aucun reward).
+  - **Escalade dans le temps** : `game.warT` monte ; `newEnemy` scale hp/dmg avec `warT` (~+40%/min) et `hordeBuff`. Ne pas remettre de scaling par étage.
+  - **Sneak** : chaque bête a un `aggroR` ; hors rayon elle erre/marche (ne chasse pas). En room `brush`, `aggroR` est divisé par 2 → planque. Toucher une bête inconsciente inflige quand même des dégâts.
+  - **Lords** (`makeLord`, tag `e.lord`) dans les camps jungle : élites tanky ; leur mort fait `game.hordeBuff++` (toute la horde durcit) + loot riche.
 - Co-op : un joueur down revit avec 1 cœur à la transition de salle suivante ; le run ne finit que quand tous sont down.
 
 ## Vérifications obligatoires avant chaque commit

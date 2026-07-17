@@ -239,9 +239,14 @@ function renderRoom(room,ox,oy,active){
       ctx.drawImage(e.spr,-w/2,-w/2,w,w);
       ctx.filter='none';ctx.restore();
       if(e.slow>0){ctx.strokeStyle='rgba(201,160,106,.7)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(e.x,e.y,e.r+3,0,7);ctx.stroke();}
+      if(e.lord){
+        ctx.strokeStyle='#ffd93b';ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(e.x,e.y,e.r+5+Math.sin(game.time*4)*1.5,0,7);ctx.stroke();
+        ctx.fillStyle='#ffd93b';ctx.font='bold '+Math.max(9,TILE*.18)+'px Trebuchet MS';ctx.textAlign='center';
+        ctx.fillText('LORD',e.x,e.y-e.r-14);ctx.textAlign='left';
+      }
       if(!e.boss&&e.hp<e.maxhp){
         ctx.fillStyle='rgba(0,0,0,.6)';roundRect(ctx,e.x-e.r,e.y-e.r-11,e.r*2,5,2.5);ctx.fill();
-        ctx.fillStyle='#c8402e';roundRect(ctx,e.x-e.r+1,e.y-e.r-10,(e.r*2-2)*(e.hp/e.maxhp),3,1.5);ctx.fill();
+        ctx.fillStyle=e.lord?'#ffd93b':'#c8402e';roundRect(ctx,e.x-e.r+1,e.y-e.r-10,(e.r*2-2)*(e.hp/e.maxhp),3,1.5);ctx.fill();
       }
     }
     const boss=game.cur.live.find(e=>e.boss);

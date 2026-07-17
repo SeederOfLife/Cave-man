@@ -98,23 +98,27 @@ function emberBlast(s,room){
 }
 function onEnemyDeath(room,e){
   if(e._died)return;e._died=true;
+  if(e.pushed)return;                 // marched off the base edge — no reward, it escaped
   game.kills++;
   dropLoot(room,e);
-  gainXp(Math.max(2,e.maxhp)+(e.boss?20:0));
-  gainUlt(e.boss?40:8);
+  gainXp(Math.max(2,e.maxhp)+(e.boss?20:0)+(e.lord?12:0));
+  gainUlt(e.boss?40:e.lord?20:8);
   if(game.stats.lifemeat)game.hunger=Math.min(100,game.hunger+game.stats.lifemeat);
-  burst(e.x,e.y,'#d0392b',e.boss?34:18,TILE*(e.boss?5:3.6));
+  burst(e.x,e.y,'#d0392b',e.boss?34:e.lord?26:18,TILE*(e.boss?5:e.lord?4.2:3.6));
   floatText(e.x,e.y-e.r-14,e.boss?'DOOM!':POW_WORDS[Math.random()*POW_WORDS.length|0],'#ff8c2e',true);
+  if(e.lord){                          // felling a lord hardens the whole horde
+    game.hordeBuff++;
+    dropLoot(room,e);dropLoot(room,e); // richer loot for the risk
+    sfx('boss');shake=Math.min(shake+7,12);
+    showMsg('THE LORD FALLS — THE HORDE HARDENS. (+STRENGTH TO ALL BEASTS)');
+  }
   if(e.boss){sfx('boss');shake=14;win();}
 }
+// lane & jungle rooms are endless (waves keep coming); only one-off rooms "clear"
 function checkClear(room){
+  if(['normal','dino'].includes(room.type))return;
   if(room.spawned&&room.live.length===0&&!room.cleared){
     room.cleared=true;sfx('clear');game.clearFlash=.5;
-    if(room.type==='tower')showMsg('THE HOLE OPENS BELOW THE GUARDIAN...');
-    else{
-      showMsg('ROOM CLEAR. DOORS OPEN.');
-      if(Math.random()<.4&&room.type!=='exit')room.items.push({type:'meat',ti:8,tj:5,bob:0});
-    }
   }
 }
 

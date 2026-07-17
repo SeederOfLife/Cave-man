@@ -21,8 +21,9 @@ function update(dt){
   const room=game.cur;
   if(msgTimer>0){msgTimer-=dt;if(msgTimer<=0)document.getElementById('msg').style.opacity=0;}
   if(game.craftOpen||game.lvlOpen)return;
-  game.time+=dt;
+  game.time+=dt;game.warT+=dt;
   if(game.clearFlash>0)game.clearFlash-=dt;
+  if((game.warMsgT-=dt)<=0){game.warMsgT=90;showMsg('THE WAR DEEPENS. THE BEASTS GROW BOLDER.');}
   for(const k in game.acd)if(game.acd[k]>0)game.acd[k]-=dt;
   for(const k in game.scd)if(game.scd[k]>0)game.scd[k]-=dt;
   tickStats(dt);
@@ -168,6 +169,16 @@ function update(dt){
 
   // ---- enemies (AI in enemies.js) ----
   updateEnemies(room,dt);
+
+  // ---- continuous creep waves (tower-defense pressure), lanes & jungle ----
+  if(['normal','dino'].includes(room.type)){
+    room.waveT=(room.waveT||0)-dt;
+    const cap=3+Math.min(4,room.tier)+(game.hordeBuff|0);
+    if(room.waveT<=0&&room.live.length<cap){
+      spawnWave(room);
+      room.waveT=Math.max(2,5-game.warT*0.02-game.hordeBuff*0.3); // waves quicken as the war deepens
+    }
+  }
 
   // ---- drops ----
   for(let i=room.drops.length-1;i>=0;i--){

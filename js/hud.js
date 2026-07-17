@@ -29,14 +29,15 @@ function drawHUD(){
   const grd=ctx.createLinearGradient(bx+20,0,bx+20+bw,0);
   grd.addColorStop(0,'#d67f2e');grd.addColorStop(1,'#ffb54d');
   ctx.fillStyle=grd;roundRect(ctx,bx+22,by+2,Math.max(1,(bw-4)*(game.hunger/100)),bh-4,3);ctx.fill();
-  // depth
+  // war clock — the horde hardens over time and with every lord felled
   ctx.textAlign='right';
   ctx.font='800 19px Trebuchet MS';
-  const label=game.mode==='tower'?'TOWER '+game.towerTier:'CAVE '+game.depth;
+  const mm=(game.warT/60|0),ss=('0'+((game.warT|0)%60)).slice(-2);
+  const label='WAR '+mm+':'+ss;
   ctx.fillStyle='rgba(0,0,0,.7)';ctx.fillText(label,VW-14,28);
-  ctx.fillStyle=game.mode==='tower'?'#5f8a4a':'#ffa63e';ctx.fillText(label,VW-15,27);
+  ctx.fillStyle='#ffa63e';ctx.fillText(label,VW-15,27);
   ctx.font='bold 11px Trebuchet MS';
-  ctx.fillStyle='#8a7660';ctx.fillText('BONES '+game.kills,VW-15,44);
+  ctx.fillStyle='#8a7660';ctx.fillText('BONES '+game.kills+(game.hordeBuff?'  ·  HORDE +'+game.hordeBuff:''),VW-15,44);
   ctx.textAlign='left';
   // materials pouch
   const pouchW=MATS.length*40+8;

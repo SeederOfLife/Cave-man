@@ -46,7 +46,9 @@ node tests/smoke.mjs           # 0 failed
 
 ## The MOBA map
 
-It's one persistent MOBA map — no dungeon levels, no descending. Your base sits at the bottom; the **guardian objective** sits at the top. Three lanes rise north — **solo** (left), **mid** (center), **bot** (right) — with **fractal jungle clusters** between them: each jungle column alternates fight camps, **hide rooms** (dense brush to duck behind and reposition), and a buff (shrine / relic). Push a lane straight at the guardian, or work the jungle first and come at it fed and armed. Rooms lock their doors until cleared, so the map is a chain of farm encounters and every step is a route choice. Difficulty rises with how far north you've pushed (not by level). Fell the guardian and the run is won. The full map shows on the minimap (blue = base, red = objective, dark-green = jungle hide).
+It's one persistent, **living** MOBA map — no dungeon levels, no descending. Your base sits at the bottom; the **guardian objective** sits at the top. Three lanes rise north — **solo** (left), **mid** (center), **bot** (right) — with **fractal jungle clusters** between them: each jungle column alternates fight camps, **hide rooms** (dense brush to duck behind and reposition), and a buff (shrine / relic).
+
+Doors never lock — you **rove** the map. Beast **waves keep coming**, marching south through the lanes (part tower-defense); you farm what you can, and you can **sneak past** anything you stay clear of (brush hides you best). The **war clock** ticks up top: the horde **hardens over time**, and every jungle **LORD** you fell makes the whole horde stronger still (rich loot, steeper fight — your call). Difficulty is by the clock and by how far north you push, never by level. Push a lane at the guardian or farm the jungle first and come at it armed. Fell the guardian and the run is won. Minimap: blue = base, red = objective, dark-green = jungle hide.
 
 ## Roadmap
 
