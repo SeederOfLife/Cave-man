@@ -56,14 +56,17 @@ Every hunter of the tribes is born knowing three motions and one promise:
 
 Kills feed the tribe's wisdom (XP). Each level, the tribe deepens **one** of the four ways (max 5). This is the loadout system the MOBA phase was waiting for.
 
-## The Rooms
+## The Map (a MOBA carved in stone)
 
-- **Start** — where the tribe left you.
-- **Normal / Water / Dino** — the fight rooms. Doors slam shut; clear them to pass.
-- **Treasure** — a shiny on a pedestal. Sometimes guarded, deeper down.
-- **Grok** — the friend. Feeds you, heals you, sometimes shares a material, always shares a rumor.
-- **Shrine of Urm** — a standing stone painted in ochre. Touch it once: healing, a random material, and silence.
-- **The Hole** — sealed under a slab until its guardians die. It only goes down.
+Each depth is the same shape, the way the old wars were fought: your **base** at the bottom, the **guardian** at the top, and between them three **lanes** — solo, mid, bot — rising north through rooms of lane-beasts you can farm. Between the lanes lie the **jungle** rooms: tougher camps, richer loot, the shrine and the relic. Push a lane straight at the guardian, or work the jungle first and come at it fed and armed. Doors slam shut in a fight room until it is cleared, so the map is a chain of encounters and every step is a choice of route.
+
+- **Base** — home, and the Silent Trader's wall. Safe.
+- **Lanes** (solo/mid/bot) — the fight rooms, lane-beasts to farm.
+- **Jungle** — camps between the lanes: harder packs, better drops.
+- **Shrine of Urm** — a carved menhir in the jungle. Touch it once: healing, a material, silence.
+- **Relic camp** — a shiny on a pedestal, guarded deeper down.
+- **Grok** — the friend, camped beside base. Feeds, heals, shares a rumor.
+- **The Guardian's Hole** — sealed under a slab until the guardian dies. It only goes down.
 
 ## The Road to the Tower (Multiplayer / MOBA Roadmap)
 
@@ -71,7 +74,7 @@ The long-term vision: an online, room-based MOBA where players farm the dungeons
 
 Everything in the current build is already shaped for it:
 
-**Phase 1 — done in this build.** The farm loop (break terrain, slay beasts, collect materials) is the MOBA's economy. Crafted items are proto-skills: the bola is already an active ability on a cooldown (Q), the rest are passive builds. Room-based structure means the map is naturally splittable into lanes and jungles of rooms.
+**Phase 1 — done in this build.** The farm loop (break terrain, slay beasts, collect materials) is the MOBA's economy. The map is now a real MOBA layout — base, three lanes, jungle rooms, a guardian objective (`genFloor` in world.js). Items are a full shop loadout and skills are on cooldowns with a charged ult. What remains is netcode.
 
 **Phase 2 — skill system.** Turn crafts into a pick-and-choose loadout: 2 active slots (Q/E) + 3 passives, with deeper recipe tiers (3-material combos: atlatl + obsidian dart = sniper skill; bola + fang = poison snare). Add the tribe totem: a home structure that can be upgraded with banked materials.
 

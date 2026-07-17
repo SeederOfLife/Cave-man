@@ -11,41 +11,34 @@ function drawMinimap(){
     ctx.textAlign='left';
     return;
   }
+  // whole MOBA map is always shown so the lanes read at a glance; visited rooms
+  // are filled, the rest outlined. Doors drawn as links between adjacent rooms.
   const rooms=game.rooms;
+  const all=Object.values(rooms);
   const cw=13,ch=9,gap=3;
-  let known=[];
-  for(const k in rooms){
-    const r=rooms[k];
-    if(r.visited){known.push(r);continue;}
-    for(const d of ['n','s','w','e']){
-      const n=rooms[key(r.gx+DIRV[d][0],r.gy+DIRV[d][1])];
-      if(n&&n.visited){known.push(r);break;}
-    }
-  }
-  if(!known.length)return;
   let minx=1e9,miny=1e9,maxx=-1e9,maxy=-1e9;
-  for(const r of known){minx=Math.min(minx,r.gx);maxx=Math.max(maxx,r.gx);miny=Math.min(miny,r.gy);maxy=Math.max(maxy,r.gy);}
+  for(const r of all){minx=Math.min(minx,r.gx);maxx=Math.max(maxx,r.gx);miny=Math.min(miny,r.gy);maxy=Math.max(maxy,r.gy);}
   const mw=(maxx-minx+1)*(cw+gap),mh=(maxy-miny+1)*(ch+gap);
   const px=VW-mw-(IS_TOUCH?76:16),py=HUDH+4;
-  ctx.fillStyle='rgba(12,8,5,.6)';roundRect(ctx,px-6,py-6,mw+12,mh+12,8);ctx.fill();
+  const cx=r=>px+(r.gx-minx)*(cw+gap),cy=r=>py+(r.gy-miny)*(ch+gap);
+  ctx.fillStyle='rgba(12,8,5,.62)';roundRect(ctx,px-6,py-6,mw+12,mh+12,8);ctx.fill();
   ctx.strokeStyle='#57422c';ctx.lineWidth=1.5;ctx.stroke();
-  for(const r of known){
-    const x=px+(r.gx-minx)*(cw+gap),y=py+(r.gy-miny)*(ch+gap);
-    const cur=r===game.cur;
-    if(r.visited){
-      ctx.fillStyle=cur?'#ffa63e':'#6b5236';
-      roundRect(ctx,x,y,cw,ch,2);ctx.fill();
-    } else {
-      ctx.strokeStyle='#4a3826';ctx.lineWidth=1.5;roundRect(ctx,x+.5,y+.5,cw-1,ch-1,2);ctx.stroke();
-    }
+  // links
+  ctx.strokeStyle='rgba(120,90,54,.5)';ctx.lineWidth=2;
+  for(const r of all)for(const d of ['e','s']){
+    const n=rooms[key(r.gx+DIRV[d][0],r.gy+DIRV[d][1])];
+    if(n){ctx.beginPath();ctx.moveTo(cx(r)+cw/2,cy(r)+ch/2);ctx.lineTo(cx(n)+cw/2,cy(n)+ch/2);ctx.stroke();}
+  }
+  for(const r of all){
+    const x=cx(r),y=cy(r),cur=r===game.cur;
+    if(r.visited){ctx.fillStyle=cur?'#ffa63e':'#6b5236';roundRect(ctx,x,y,cw,ch,2);ctx.fill();}
+    else{ctx.strokeStyle='#4a3826';ctx.lineWidth=1.5;roundRect(ctx,x+.5,y+.5,cw-1,ch-1,2);ctx.stroke();}
     let icon=null;
-    if(r.type==='treasure')icon='#b9c6cf';
-    else if(r.type==='exit')icon='#000';
+    if(r.type==='start')icon='#8ad0e2';
+    else if(r.type==='exit')icon='#c8402e';        // the objective / guardian
+    else if(r.type==='treasure')icon='#b9c6cf';
     else if(r.type==='grok')icon='#8ac24a';
     else if(r.type==='shrine')icon='#c1642a';
-    if(icon){
-      ctx.fillStyle=icon;
-      ctx.beginPath();ctx.arc(x+cw/2,y+ch/2,2,0,7);ctx.fill();
-    }
+    if(icon){ctx.fillStyle=icon;ctx.beginPath();ctx.arc(x+cw/2,y+ch/2,r.type==='exit'?3:2,0,7);ctx.fill();}
   }
 }

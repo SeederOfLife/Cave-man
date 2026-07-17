@@ -84,6 +84,17 @@ assert(T.game.cur && T.game.cur.type === 'start' && T.game.cur.obst, 'room de d�
 T.render();
 assert(true, 'render() de la salle de départ sans crash (héros + trader)');
 
+// 1bis. carte MOBA : base, objectif, 3 lanes, jungle, et graphe connexe
+const R = T.game.rooms;
+assert(R['0,0'] && R['0,0'].type === 'start', 'base au sud (0,0)');
+assert(R['0,-4'] && R['0,-4'].type === 'exit', 'objectif/gardien au nord (0,-4)');
+assert(['-2,-1', '0,-1', '2,-1'].every(k => R[k] && R[k].type === 'normal'), '3 lanes (solo/mid/bot)');
+assert(R['-1,-2'].type === 'shrine' && R['1,-2'].type === 'treasure', 'camps de jungle (shrine + relic)');
+const DV = { n: [0, -1], s: [0, 1], w: [-1, 0], e: [1, 0] };
+const seen = new Set(['0,0']), q = ['0,0'];
+while (q.length) { const k = q.pop(), r = R[k]; for (const d in DV) if (r.doors[d]) { const nk = (r.gx + DV[d][0]) + ',' + (r.gy + DV[d][1]); if (R[nk] && !seen.has(nk)) { seen.add(nk); q.push(nk); } } }
+assert(seen.size === Object.keys(R).length, `carte connexe depuis la base (${seen.size}/${Object.keys(R).length})`);
+
 // 2. boucle + mouvement
 const x0 = T.game.players[0].x;
 T.keys['KeyD'] = true;

@@ -44,6 +44,10 @@ node scripts/check-sizes.mjs   # all js files under 300 lines
 node tests/smoke.mjs           # 0 failed
 ```
 
+## The MOBA map
+
+Each depth is a fixed MOBA-style map, not a random dungeon. Your base sits at the bottom; the guardian objective sits at the top. Three lanes rise north — **solo** (left), **mid** (center), **bot** (right) — with **jungle** rooms between them. Push a lane straight to the guardian, or peel into the jungle to farm tougher camps, grab the shrine/relic buffs, and cut between lanes. Rooms lock their doors until cleared, so moving through the map is a string of farm encounters; the guardian's room opens the hole down to the next, deeper map. The full map shows on the minimap (blue = base, red = objective).
+
 ## Roadmap
 
 The MOBA vision (dungeon-farming, then racing or fighting to the top of the First Tower) is documented in `CAVEMAN_LORE.md`. Current build covers: farm loop, craft loadout (2 active tools / 3 passive crafts), Tower bosses every 3 caves, and local 2-player co-op. Next big step is a WebSocket server for online play.

@@ -53,7 +53,7 @@ function newCaveFloor(){
   placePlayers(8.5*TILE,5.5*TILE);
   revivePlayers();
   game.stones.length=0;game.spits.length=0;game.bolas.length=0;
-  showMsg(DEPTH_LORE[Math.min(game.depth-1,DEPTH_LORE.length-1)]+(game.depth>1?'  ·  CAVE '+game.depth:''));
+  showMsg(DEPTH_LORE[Math.min(game.depth-1,DEPTH_LORE.length-1)]+'  ·  PUSH NORTH — FARM THE LANES & JUNGLE, FELL THE GUARDIAN'+(game.depth>1?'  ·  DEPTH '+game.depth:''));
 }
 function newTowerFloor(){
   game.mode='tower';
